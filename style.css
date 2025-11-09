@@ -176,35 +176,36 @@ body,
 }
 
 /* Panel show/hide toggle button ------------------------------------------ */
+#panel.hidden {
+  transform: translateX(-380px);
+  opacity: 0.9;
+}
+
+/* Toggle button that stays fixed on screen edge */
 .panel-toggle {
   position: absolute;
-  top: 14px;
-  left: 380px;
-  /* sits just beside your 360‑px panel */
-  z-index: 1001;
-  width: 26px;
-  height: 26px;
-  background: #1c2340;
-  border: 1px solid #2b3663;
+  top: 16px;
+  left: 380px; /* starts aligned to panel edge */
+  z-index: 2000; /* above everything so it never hides */
+  width: 28px;
+  height: 28px;
+  border: 2px solid #2b3663;
   border-radius: 6px;
+  background: #1a203b;
   color: #e8ecff;
   font-size: 18px;
-  line-height: 22px;
+  line-height: 24px;
   cursor: pointer;
-  transition: left 0.3s ease, background 0.2s ease;
+  transition: left 0.35s cubic-bezier(0.4, 0, 0.2, 1),
+              background 0.2s ease;
 }
 
 .panel-toggle:hover {
   background: #2a3357;
 }
 
-/* When panel is hidden */
-#panel.hidden {
-  transform: translateX(-370px);
-  transition: transform 0.3s ease;
-}
-
-#panel.hidden+.panel-toggle {
+/* when panel hidden, move button closer to left edge */
+#panel.hidden ~ .panel-toggle {
   left: 14px;
 }
 

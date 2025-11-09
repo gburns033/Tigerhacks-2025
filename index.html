@@ -69,8 +69,48 @@
     imageryLayer.saturation = 0.4;
 
     viewer.camera.flyTo({
-      destination: Cesium.Cartesian3.fromDegrees(137.4, -4.6, 2_000_000),
+      destination: Cesium.Cartesian3.fromDegrees(-133.3, 18.4, 3_500_000),
     });
+
+
+
+
+    const handler = new Cesium.ScreenSpaceEventHandler(viewer.scene.canvas);
+
+// Create a simple HTML element to display coordinates
+const coordLabel = document.createElement("div");
+coordLabel.style.position = "absolute";
+coordLabel.style.bottom = "10px";
+coordLabel.style.left = "10px";
+coordLabel.style.padding = "4px 8px";
+coordLabel.style.background = "rgba(0,0,0,0.6)";
+coordLabel.style.color = "white";
+coordLabel.style.fontFamily = "monospace";
+coordLabel.style.fontSize = "13px";
+coordLabel.style.borderRadius = "4px";
+document.body.appendChild(coordLabel);
+
+handler.setInputAction(
+  function (movement) {
+    const ray = viewer.camera.getPickRay(movement.endPosition);
+    const cartesian = viewer.scene.globe.pick(ray, viewer.scene);
+
+    if (cartesian) {
+      const cartographic = Cesium.Ellipsoid.WGS84.cartesianToCartographic(
+        cartesian
+      );
+
+      const lat = Cesium.Math.toDegrees(cartographic.latitude).toFixed(5);
+      const lon = Cesium.Math.toDegrees(cartographic.longitude).toFixed(5);
+      const height = cartographic.height.toFixed(1);
+
+      coordLabel.textContent = `Lon: ${lon}°, Lat: ${lat}°, H: ${height}m`;
+    } else {
+      coordLabel.textContent = "Off planet";
+    }
+  },
+  Cesium.ScreenSpaceEventType.MOUSE_MOVE
+);
   </script>
 </body>
 

@@ -1,7 +1,7 @@
 // Mars ellipsoid
 viewer.scene.globe.ellipsoid = new Cesium.Ellipsoid(3396190.0, 3396190.0, 3376200.0);
 // Camera limits
-viewer.scene.screenSpaceCameraController.minimumZoomDistance = 4.0e5;
+viewer.scene.screenSpaceCameraController.minimumZoomDistance = 3.0e6;
 viewer.scene.screenSpaceCameraController.maximumZoomDistance = 3.0e7;
 
 // Raster imagery
@@ -45,18 +45,26 @@ handler.setInputAction((movement) => {
 let idleTimeout;
 let isRotating = false;
 let hasZoomedOut = false;
-const IDLE_TIME = 3000; // 3 seconds of idle time before zoom and rotation starts
+let hasUserInteracted = false;
+const IDLE_TIME = 10000; // 10 seconds of idle time before zoom and rotation starts
 const ROTATION_SPEED = 0.001; // Rotation speed
 
 function startRotation() {
     if (!isRotating) {
         isRotating = true;
 
+        const currentPosition = viewer.camera.position;
+        const currentCartographic = Cesium.Ellipsoid.WGS84.cartesianToCartographic(currentPosition);
+
         // Zoom out if we haven't already
         if (!hasZoomedOut) {
             hasZoomedOut = true;
             viewer.camera.flyTo({
-                destination: Cesium.Cartesian3.fromDegrees(-133.3, 18.4, 15_000_000),
+                destination: Cesium.Cartesian3.fromRadians(
+                    currentCartographic.longitude,
+                    currentCartographic.latitude,
+                    25_000_000
+                ),
                 duration: 3, // 3 seconds to zoom out
             });
         }
@@ -79,16 +87,26 @@ function rotateCamera() {
 }
 
 function resetIdleTimer() {
-    stopRotation();
-    clearTimeout(idleTimeout);
-    idleTimeout = setTimeout(startRotation, IDLE_TIME);
+    if (hasUserInteracted) {
+        stopRotation();
+        clearTimeout(idleTimeout);
+        idleTimeout = setTimeout(startRotation, IDLE_TIME);
+    }
 }
 
 // Stop rotation and reset timer on any user interaction
-viewer.scene.canvas.addEventListener('mousedown', resetIdleTimer);
-viewer.scene.canvas.addEventListener('mousemove', resetIdleTimer);
-viewer.scene.canvas.addEventListener('wheel', resetIdleTimer);
-viewer.scene.canvas.addEventListener('touchstart', resetIdleTimer);
+viewer.scene.canvas.addEventListener('mousedown', () => {
+    hasUserInteracted = true;
+    resetIdleTimer();
+});
+viewer.scene.canvas.addEventListener('wheel', () => {
+    hasUserInteracted = true;
+    resetIdleTimer();
+});
+viewer.scene.canvas.addEventListener('touchstart', () => {
+    hasUserInteracted = true;
+    resetIdleTimer();
+});
 
 // Start the initial idle timer
-resetIdleTimer();
+startRotation();

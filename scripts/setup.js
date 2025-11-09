@@ -11,7 +11,7 @@ var viewer = new Cesium.Viewer("cesiumContainer", {
     timeline: false,
     creditContainer: document.createElement("div"),
     sceneModePicker: true,
-    selectionIndicator: false,
+    selectionIndicator: true,
     scene3DOnly: true
 });
 

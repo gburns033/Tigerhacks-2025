@@ -104,16 +104,6 @@ function redrawDashed() {
     },
     show: dashedVisible
   });
-
-  try {
-    const rect = Cesium.Rectangle.fromDegrees(
-      Math.min(...waypoints.map(p => p.lon)),
-      Math.min(...waypoints.map(p => p.lat)),
-      Math.max(...waypoints.map(p => p.lon)),
-      Math.max(...waypoints.map(p => p.lat))
-    );
-    viewer.camera.flyTo({ destination: rect, duration: 0.6 });
-  } catch (_) {}
 }
 // endregion
 

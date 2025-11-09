@@ -23,8 +23,6 @@ imageryLayer.alpha = 0.9;
 imageryLayer.brightness = 1.1;
 imageryLayer.saturation = 0.4;
 
-Cesium.Camera.DEFAULT_VIEW_RECTANGLE = Cesium.Rectangle.fromDegrees(-133, 18, -133, 18);
-
 // ---------- Mouse coordinate readout (kept) ----------
 const coordLabel = document.getElementById("coordLabel");
 const handler = new Cesium.ScreenSpaceEventHandler(viewer.scene.canvas);
@@ -45,7 +43,6 @@ handler.setInputAction((movement) => {
 let idleTimeout;
 let isRotating = false;
 let hasZoomedOut = false;
-let hasUserInteracted = false;
 const IDLE_TIME = 10000; // 10 seconds of idle time before zoom and rotation starts
 const ROTATION_SPEED = 0.001; // Rotation speed
 
@@ -86,32 +83,21 @@ function rotateCamera() {
     camera.rotate(Cesium.Cartesian3.UNIT_Z, ROTATION_SPEED);
 }
 
-function resetIdleTimer() {
-    if (hasUserInteracted) {
-        stopRotation();
-        clearTimeout(idleTimeout);
-        idleTimeout = setTimeout(startRotation, IDLE_TIME);
-    }
-}
+// Start the orbit immediately on page load
+startRotation();
 
 // Stop rotation and reset timer on any user interaction
-document.addEventListener('mousedown', () => {
-    hasUserInteracted = true;
-    resetIdleTimer();
-});
-viewer.scene.canvas.addEventListener('wheel', () => {
-    hasUserInteracted = true;
-    resetIdleTimer();
-});
-viewer.scene.canvas.addEventListener('touchstart', () => {
-    hasUserInteracted = true;
-    resetIdleTimer();
-});
-viewer.scene.camera.changed.addEventListener(() => {
-    if (hasUserInteracted) {
-        resetIdleTimer();
-    }
-});
+viewer.scene.canvas.addEventListener('mousedown', () => { stopRotation(); });
+viewer.scene.canvas.addEventListener('wheel', () => { stopRotation(); });
+viewer.scene.canvas.addEventListener('touchstart', () => { stopRotation(); });
 
-// Start the initial idle timer
-startRotation();
+// Handle home button press
+viewer.homeButton.viewModel.command.beforeExecute.addEventListener(() => {
+  isRotating = false;
+  hasZoomedOut = false;
+  viewer.clock.onTick.removeEventListener(rotateCamera);
+  
+  setTimeout(() => {
+    startRotation();
+  }, 500);
+});

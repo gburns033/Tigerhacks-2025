@@ -20,6 +20,7 @@ const waypoints = []; // {lon, lat, entity}
 let adding = false;
 let dashedEntity = null;
 let solvedEntity = null;
+let lastSolveResult = null;
 
 btnAdd.onclick = () => {
   adding = !adding;
@@ -45,14 +46,20 @@ btnClear.onclick = () => {
 };
 
 btnDownload.onclick = () => {
-  if (!waypoints.length) return;
-  const data = { positions: waypoints.map(p => ({ lon: p.lon, lat: p.lat })) };
-  const blob = new Blob([JSON.stringify(data, null, 2)], { type: "application/json" });
+  if (!lastSolveResult) {
+    status("⚠ No solved route to download yet.");
+    return;
+  }
+
+  const jsonText = JSON.stringify(lastSolveResult, null, 2);
+  const blob = new Blob([jsonText], { type: "application/json" });
   const a = document.createElement("a");
   a.href = URL.createObjectURL(blob);
-  a.download = "route_lonlat.json";
+  a.download = "solved_route.json";
   a.click();
   URL.revokeObjectURL(a.href);
+
+  status("Downloaded solved route JSON.");
 };
 
 function renderList() {
@@ -205,6 +212,7 @@ $("solve").onclick = async () => {
     const res = await solveRouteViaAPI(
       waypoints, autoGrid, +margin.value, +maxSlope.value, +slopeW.value
     );
+    lastSolveResult = res;
     drawSolvedRoute(res.positions);
     // Show distance-like cost if present
     if (typeof res.total_cost_m === "number") {

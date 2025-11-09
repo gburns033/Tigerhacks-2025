@@ -25,7 +25,7 @@ let lastSolveResult = null;
 btnAdd.onclick = () => {
   stopRotation();
   adding = !adding;
-  btnAdd.textContent = adding ? "Adding… (click globe)" : "Add Waypoints";
+  btnAdd.textContent = adding ? "Adding (click globe)" : "Add Waypoints";
   btnAdd.classList.toggle("secondary", !adding);
   status(adding ? "Click the globe to add waypoints." : "");
 };
@@ -75,24 +75,35 @@ function renderList() {
 }
 
 function redrawDashed() {
-  if (dashedEntity) { viewer.entities.remove(dashedEntity); dashedEntity = null; }
+  if (dashedEntity) {
+    viewer.entities.remove(dashedEntity);
+    dashedEntity = null;
+  }
   if (waypoints.length < 2) return;
+
   const degs = waypoints.flatMap(p => [p.lon, p.lat]);
   dashedEntity = viewer.entities.add({
     polyline: {
       positions: Cesium.Cartesian3.fromDegreesArray(degs),
       width: 2,
-      material: new Cesium.PolylineDashMaterialProperty({ color: Cesium.Color.RED, dashLength: 12 }),
+      material: new Cesium.PolylineDashMaterialProperty({
+        color: Cesium.Color.RED,
+        dashLength: 12
+      }),
       clampToGround: false
-    }
+    },
+    show: dashedVisible
   });
+
   try {
     const rect = Cesium.Rectangle.fromDegrees(
-      Math.min(...waypoints.map(p => p.lon)), Math.min(...waypoints.map(p => p.lat)),
-      Math.max(...waypoints.map(p => p.lon)), Math.max(...waypoints.map(p => p.lat))
+      Math.min(...waypoints.map(p => p.lon)),
+      Math.min(...waypoints.map(p => p.lat)),
+      Math.max(...waypoints.map(p => p.lon)),
+      Math.max(...waypoints.map(p => p.lat))
     );
     viewer.camera.flyTo({ destination: rect, duration: 0.6 });
-  } catch (_) { }
+  } catch (_) {}
 }
 
 // ---------- High-resolution text billboard helper ----------
@@ -203,6 +214,22 @@ fileInput.onchange = async e => {
   } finally {
     fileInput.value = ""; // reset so same file can be chosen again
   }
+};
+
+const dashToggle = document.getElementById("dashToggle");
+let dashedVisible = true;
+
+// initialize
+dashToggle.classList.toggle("active", dashedVisible);
+dashToggle.title = dashedVisible ? "Hide dashed line" : "Show dashed line";
+
+// handle click
+dashToggle.onclick = () => {
+  dashedVisible = !dashedVisible;
+  dashToggle.classList.toggle("active", dashedVisible);
+  dashToggle.title = dashedVisible ? "Hide dashed line" : "Show dashed line";
+
+  if (dashedEntity) dashedEntity.show = dashedVisible;
 };
 
 function addWaypoint(lon, lat) {
@@ -338,7 +365,7 @@ slopeWVal.textContent = (+slopeW.value).toFixed(2);
 
 // Solve button
 $("solve").onclick = async () => {
-  if (waypoints.length < 2) { status("Add at least Start and End."); return; }
+  if (waypoints.length < 2) { status("Add at least two waypoints."); return; }
   status("Solving (local Flask A*)…");
   try {
     const autoGrid = autoGridSize(waypoints);

@@ -273,6 +273,19 @@ body,
   /* optical vertical center tweak */
 }
 
+#dashToggle.active {
+  background: #7aa2ff;
+  color: #0c0f17;
+  border-color: #7aa2ff;
+}
+
+/* Active (ON) look for secondary buttons like Dashed Line or Landmarks */
+#panel button.secondary.active {
+  background: #7aa2ff;
+  color: #0c0f17;
+  border-color: #7aa2ff;
+}
+
 /* Landmarks Toggle Button ----------------------------------------------- */
 .landmark-toggle {
   display: flex;

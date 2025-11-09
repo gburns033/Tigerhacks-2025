@@ -9,6 +9,8 @@ var viewer = new Cesium.Viewer("cesiumContainer", {
     shouldAnimate: true,
     animation: false,
     timeline: false,
+    infoBox: false,
+    fullscreenButton: false,
     creditContainer: document.createElement("div"),
     sceneModePicker: true,
     selectionIndicator: true,

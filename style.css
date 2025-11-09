@@ -1,323 +1,382 @@
 html,
 body,
 #cesiumContainer {
-  font-family: Inter, system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
-  width: 100%;
-  height: 100%;
-  margin: 0;
-  padding: 0;
-  overflow: hidden;
-  display: block;
+    font-family: Inter, system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+    width: 100%;
+    height: 100%;
+    margin: 0;
+    padding: 0;
+    overflow: hidden;
+    display: block;
+}
+
+/* Global scrollbar styling ----------------------------------------------- */
+
+/* WebKit (Chrome, Edge, Safari) */
+*::-webkit-scrollbar {
+    width: 10px;
+    height: 10px;
+}
+
+/* Hide the up/down/left/right buttons */
+*::-webkit-scrollbar-button {
+    display: none;
+    width: 0;
+    height: 0;
+}
+
+*::-webkit-scrollbar-track {
+    background-color: transparent;
+    /* works */
+}
+
+*::-webkit-scrollbar-thumb {
+    background: #2b3663;
+    /* medium blue thumb */
+    border-radius: 6px;
+    border: 2px solid #1a203b;
+    /* gives thumb some padding & contrast */
+    transition: background 0.2s ease;
+}
+
+*::-webkit-scrollbar-thumb:hover {
+    background: #7aa2ff;
+    /* bright blue on hover */
+}
+
+/* Firefox */
+* {
+    scrollbar-width: thin;
+    /* makes it compact */
+    scrollbar-color: #2b3663 transparent;
+    /* thumb, track */
 }
 
 /* Waypoint control panel -------------------------------------------------- */
 #panel {
-  position: absolute;
-  top: 12px;
-  left: 12px;
-  z-index: 1000;
-  width: 330px;
-  padding: 12px 14px;
-  background: #121726;
-  color: #e8ecff;
-  border: 2px solid #2a3357;
-  border-radius: 14px;
-  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.35);
-  transform: translateX(0);
-  transition: transform 0.35s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.35s ease;
-  opacity: 1;
+    position: absolute;
+    top: 12px;
+    left: 12px;
+    z-index: 1000;
+    width: 330px;
+    padding: 12px 14px;
+    background: #121726;
+    color: #e8ecff;
+    border: 2px solid #2a3357;
+    border-radius: 14px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.35);
+    transform: translateX(0);
+    transition: transform 0.35s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.35s ease;
+    opacity: 1;
 }
 
 #panel h1 {
-  margin: 0 0 4px 0;
-  font-size: 20px;
+    margin: 0 0 4px 0;
+    font-size: 20px;
 }
 
 #panel h3 {
-  margin: 0 0 4px 0;
-  font-size: 16px;
+    margin: 0 0 4px 0;
+    font-size: 16px;
 }
 
 /* Common row layout */
 #panel .row {
-  display: flex;
-  gap: 8px;
-  align-items: center;
-  margin: 8px 0;
-  flex-wrap: wrap;
+    display: flex;
+    gap: 8px;
+    align-items: center;
+    margin: 8px 0;
+    flex-wrap: wrap;
 }
 
 /* Main button styles ------------------------------------------------------ */
 #panel button {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 6px;
-  background: #7aa2ff;
-  border: none;
-  color: #0c0f17;
-  font-weight: 600;
-  font-size: 13px;
-  line-height: 1;
-  padding: 8px 14px;
-  border-radius: 10px;
-  cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    background: #7aa2ff;
+    border: none;
+    color: #0c0f17;
+    font-weight: 600;
+    font-size: 13px;
+    line-height: 1;
+    padding: 8px 14px;
+    border-radius: 10px;
+    cursor: pointer;
 }
 
 /* Feather / Lucide icons inside buttons */
 #panel button svg {
-  width: 18px;
-  height: 18px;
-  stroke-width: 2.2;
-  vertical-align: middle;
-  margin-top: -1px;
-  /* optical alignment with text baseline */
-  flex-shrink: 0;
+    width: 18px;
+    height: 18px;
+    stroke-width: 2.2;
+    vertical-align: middle;
+    margin-top: -1px;
+    /* optical alignment with text baseline */
+    flex-shrink: 0;
 }
 
 /* Secondary buttons */
 #panel button.secondary {
-  background: #222a4a;
-  color: #e6ecff;
-  border: 1px solid #2f396b;
+    background: #222a4a;
+    color: #e6ecff;
+    border: 1px solid #2f396b;
 }
 
 /* Slider + label styling -------------------------------------------------- */
 #panel label {
-  font-size: 12px;
-  color: #b9c0d9;
+    font-size: 12px;
+    color: #b9c0d9;
 }
 
 /* Flat blue themed range slider ------------------------------------------- */
 #panel input[type="range"] {
-  -webkit-appearance: none;
-  width: 160px;
-  height: 5px;
-  /* Track height */
-  border-radius: 4px;
-  background: linear-gradient(to right,
-      #7aa2ff 0%,
-      #7aa2ff var(--range-percent, 50%),
-      #1a203b var(--range-percent, 50%),
-      #1a203b 100%);
-  outline: none;
-  cursor: pointer;
+    -webkit-appearance: none;
+    width: 160px;
+    height: 5px;
+    /* Track height */
+    border-radius: 4px;
+    background: linear-gradient(to right,
+            #7aa2ff 0%,
+            #7aa2ff var(--range-percent, 50%),
+            #1a203b var(--range-percent, 50%),
+            #1a203b 100%);
+    outline: none;
+    cursor: pointer;
 }
 
 /* WebKit (Chrome, Edge, Safari) */
 #panel input[type="range"]::-webkit-slider-thumb {
-  -webkit-appearance: none;
-  width: 14px;
-  height: 14px;
-  border-radius: 50%;
-  background: #7aa2ff;
-  border: 2px solid #d3e0ff;
-  cursor: pointer;
-  margin-top: -5px;
-  /* centers thumb */
-  transition: background 0.2s ease, transform 0.1s ease;
+    -webkit-appearance: none;
+    width: 14px;
+    height: 14px;
+    border-radius: 50%;
+    background: #7aa2ff;
+    border: 2px solid #d3e0ff;
+    cursor: pointer;
+    margin-top: -5px;
+    /* centers thumb */
+    transition: background 0.2s ease, transform 0.1s ease;
 }
 
 #panel input[type="range"]::-webkit-slider-thumb:hover {
-  transform: scale(1.1);
+    transform: scale(1.1);
 }
 
 /* Firefox */
 #panel input[type="range"]::-moz-range-track {
-  height: 5px;
-  background: #1a203b;
-  border-radius: 4px;
+    height: 5px;
+    background: #1a203b;
+    border-radius: 4px;
 }
 
 #panel input[type="range"]::-moz-range-progress {
-  height: 5px;
-  background: #7aa2ff;
-  border-radius: 4px;
+    height: 5px;
+    background: #7aa2ff;
+    border-radius: 4px;
 }
 
 #panel input[type="range"]::-moz-range-thumb {
-  width: 14px;
-  height: 14px;
-  border-radius: 50%;
-  background: #7aa2ff;
-  border: 2px solid #d3e0ff;
-  cursor: pointer;
-  transition: background 0.2s ease, transform 0.1s ease;
+    width: 14px;
+    height: 14px;
+    border-radius: 50%;
+    background: #7aa2ff;
+    border: 2px solid #d3e0ff;
+    cursor: pointer;
+    transition: background 0.2s ease, transform 0.1s ease;
 }
 
 #panel input[type="range"]::-moz-range-thumb:hover {
-  transform: scale(1.1);
+    transform: scale(1.1);
 }
 
 #panel .pill {
-  display: inline-block;
-  padding: 2px 8px;
-  border-radius: 999px;
-  background: #1c2340;
-  border: 1px solid #2b3663;
-  font-size: 11px;
-  color: #cdd7ff;
+    display: inline-block;
+    padding: 2px 8px;
+    border-radius: 999px;
+    background: #1c2340;
+    border: 1px solid #2b3663;
+    font-size: 11px;
+    color: #cdd7ff;
 }
 
 /* Status text and waypoint list ------------------------------------------ */
 #panel #status {
-  font-size: 12px;
-  color: #9fb2ff;
-  min-height: 1.4em;
-  margin-top: 6px;
+    font-size: 12px;
+    color: #9fb2ff;
+    min-height: 1.4em;
+    margin-top: 6px;
 }
 
 #panel #list {
-  max-height: 130px;
-  overflow: auto;
-  border-top: 1px dashed #2b3663;
-  padding-top: 6px;
-  font-size: 12px;
+    max-height: 130px;
+    overflow: auto;
+    border-top: 1px dashed #2b3663;
+    padding-top: 6px;
+    font-size: 12px;
 }
 
 /* Panel show/hide toggle button ------------------------------------------ */
 #panel.hidden {
-  transform: translateX(-380px);
-  opacity: 0.9;
+    transform: translateX(-380px);
+    opacity: 0.9;
 }
 
 /* Toggle button that stays fixed on screen edge */
 .panel-toggle {
-  position: absolute;
-  top: 16px;
-  left: 380px; /* starts aligned to panel edge */
-  z-index: 2000; /* above everything so it never hides */
-  width: 28px;
-  height: 28px;
-  border: 2px solid #2b3663;
-  border-radius: 6px;
-  background: #1a203b;
-  color: #e8ecff;
-  font-size: 18px;
-  line-height: 24px;
-  cursor: pointer;
-  transition: left 0.35s cubic-bezier(0.4, 0, 0.2, 1),
-              background 0.2s ease;
+    position: absolute;
+    top: 16px;
+    left: 380px;
+    /* starts aligned to panel edge */
+    z-index: 2000;
+    /* above everything so it never hides */
+    width: 28px;
+    height: 28px;
+    border: 2px solid #2b3663;
+    border-radius: 6px;
+    background: #1a203b;
+    color: #e8ecff;
+    font-size: 18px;
+    line-height: 24px;
+    cursor: pointer;
+    transition: left 0.35s cubic-bezier(0.4, 0, 0.2, 1),
+        background 0.2s ease;
 }
 
 .panel-toggle:hover {
-  background: #2a3357;
+    background: #2a3357;
 }
 
 /* when panel hidden, move button closer to left edge */
-#panel.hidden ~ .panel-toggle {
-  left: 14px;
+#panel.hidden~.panel-toggle {
+    left: 14px;
 }
 
 /* Small legend bubble (optional) ----------------------------------------- */
 #legend {
-  position: absolute;
-  bottom: 14px;
-  left: 12px;
-  z-index: 1000;
-  background: #121726;
-  color: #cdd7ff;
-  border: 1px solid #2b3663;
-  padding: 6px 8px;
-  border-radius: 10px;
-  font-size: 12px;
-  font-family: Inter, system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+    position: absolute;
+    bottom: 14px;
+    left: 12px;
+    z-index: 1000;
+    background: #121726;
+    color: #cdd7ff;
+    border: 1px solid #2b3663;
+    padding: 6px 8px;
+    border-radius: 10px;
+    font-size: 12px;
+    font-family: Inter, system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
 }
 
 /* Mouse coordinate label -------------------------------------------------- */
 #coordLabel {
-  position: absolute;
-  bottom: 10px;
-  left: 10px;
-  padding: 4px 8px;
-  background: rgba(18, 23, 38, 0.6);
-  color: white;
-  font-family: monospace;
-  font-size: 13px;
-  border-radius: 4px;
-  z-index: 1000;
+    position: absolute;
+    bottom: 10px;
+    left: 10px;
+    padding: 4px 8px;
+    background: rgba(18, 23, 38, 0.6);
+    color: white;
+    font-family: monospace;
+    font-size: 13px;
+    border-radius: 4px;
+    z-index: 1000;
 }
 
 /* Sidebar / info panel ---------------------------------------------------- */
 .sidebar {
-  position: fixed;
-  right: 0;
-  top: 0;
-  width: 360px;
-  height: 100vh;
-  background: #121726;
-  color: #e8ecff;
-  padding: 12px 14px;
-  border: 2px solid #2a3357;
-  border-radius: 0;
-  box-shadow: -10px 0 30px rgba(0, 0, 0, 0.35);
-  overflow-y: auto;
-  z-index: 1000;
-  transition: transform 0.3s ease;
-  font-family: Inter, system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+    position: absolute;
+    top: 12px;
+    right: 12px;
+    bottom: 12px;
+    /* ✅ inset from bottom like your panel spacing */
+    width: 330px;
+    background: #121726;
+    color: #e8ecff;
+    padding: 2px 14px;
+    border: 2px solid #2a3357;
+    border-radius: 14px;
+    /* consistent with your panel */
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.35);
+    overflow-y: auto;
+    z-index: 1000;
+    transform: translateX(0);
+    transition: 
+        opacity 0.35s ease,
+        transform 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+    opacity: 1;
+    font-family: Inter, system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
 }
 
+/* Hidden (closed) state: slides slightly to the right and fades */
 .sidebar.hidden {
-  transform: translateX(100%);
+    transform: translateX(30px);
+    opacity: 0;
+    pointer-events: none;
+    /* disables clicks when hidden */
 }
 
+/* Close button */
 .close-btn {
-  background: none;
-  border: none;
-  color: #e8ecff;
-  font-size: 20px;
-  cursor: pointer;
-  float: right;
-  padding: 0;
-  width: 24px;
-  height: 24px;
+    background: none;
+    border: none;
+    color: #e8ecff;
+    font-size: 20px;
+    cursor: pointer;
+    float: right;
+    padding: 0;
+    width: 24px;
+    height: 24px;
+    transition: color 0.2s ease;
+    position: absolute;
+    top: 10px;
+    right: 14px;
 }
 
 .close-btn:hover {
-  color: #7aa2ff;
+    color: #7aa2ff;
 }
 
+/* Inner content ----------------------------------------------------------- */
 #sidebarContent {
-  margin-top: 12px;
-  clear: both;
+    margin-top: 12px;
 }
 
 #sidebarContent h2 {
-  margin: 0 0 8px 0;
-  font-size: 16px;
-  color: #e8ecff;
+    margin: 0 0 8px 0;
+    font-size: 16px;
+    color: #e8ecff;
 }
 
 #sidebarContent p {
-  line-height: 1.6;
-  font-size: 12px;
-  color: #b9c0d9;
-  margin: 6px 0;
+    line-height: 1.6;
+    font-size: 12px;
+    color: #b9c0d9;
+    margin: 6px 0;
 }
 
 #sidebarContent strong {
-  color: #cdd7ff;
+    color: #cdd7ff;
 }
 
 #sidebarContent img {
-  width: 100%;
-  height: 250px;
-  border-radius: 10px;
-  margin: 8px 0;
-  object-fit: cover;
-  max-height: 250px;
-  border: 1px solid #2a3357;
+    width: 100%;
+    height: 250px;
+    border-radius: 10px;
+    margin: 8px 0;
+    object-fit: cover;
+    max-height: 250px;
+    border: 1px solid #2a3357;
 }
 
 #sidebarContent a {
-  display: inline-block;
-  background: #222a4a;
-  border: none;
-  color: #e6ecff;
-  font-weight: 600;
-  padding: 8px 8px;
-  border-radius: 10px;
-  cursor: pointer;
-  text-decoration: none;
-  font-size: 12px;
+    display: inline-block;
+    background: #222a4a;
+    border: 1px solid #2f396b;
+    color: #e6ecff;
+    font-weight: 600;
+    padding: 8px 8px;
+    border-radius: 10px;
+    cursor: pointer;
+    text-decoration: none;
+    font-size: 12px;
 }

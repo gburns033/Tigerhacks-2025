@@ -35,7 +35,7 @@ handler.setInputAction((movement) => {
         const lon = Cesium.Math.toDegrees(carto.longitude).toFixed(5);
         coordLabel.textContent = `Lon: ${lon}°, Lat: ${lat}°`;
     } else {
-        coordLabel.textContent = "Off planet";
+        coordLabel.textContent = "Off world";
     }
 }, Cesium.ScreenSpaceEventType.MOUSE_MOVE);
 

@@ -43,49 +43,51 @@ const closeSidebar = document.getElementById("closeSidebar");
 const screenHandler = new Cesium.ScreenSpaceEventHandler(viewer.scene.canvas);
 
 screenHandler.setInputAction((movement) => {
-  const pickedObject = viewer.scene.pick(movement.position);
-  
-  if (Cesium.defined(pickedObject)) {
-    const entity = pickedObject.id;
-    
-    // ✅ Check if it's a landmark (not a waypoint)
-    if (entity && entity.__isLandmark && entity.__landmarkData) {
-      showLandmarkSidebar(entity);
-      return; // Don't interfere with other clicks
+    const pickedObject = viewer.scene.pick(movement.position);
+
+    if (Cesium.defined(pickedObject)) {
+        const entity = pickedObject.id;
+
+        // ✅ Check if it's a landmark (not a waypoint)
+        if (entity && entity.__isLandmark && entity.__landmarkData) {
+            showLandmarkSidebar(entity);
+            return; // Don't interfere with other clicks
+        }
     }
-  }
+
+    sidebar.classList.add("hidden");
 }, Cesium.ScreenSpaceEventType.LEFT_CLICK);
 
 function showLandmarkSidebar(entity) {
-  const props = entity.__landmarkData;
-  
-  // Build HTML with landmark info
-  let html = `<h2>${props.name || "Unnamed Landmark"}</h2>`;
+    const props = entity.__landmarkData;
 
-  if (props.image) {
-    html += `<img src="${props.image}" alt="${props.name}" style="max-width: 100%; height: auto; margin-bottom: 10px;">`;
-  }
+    // Build HTML with landmark info
+    let html = `<h2>${props.name || "Unnamed Landmark"}</h2>`;
 
-  if (props.description) {
-    html += `<p>${props.description}</p>`;
-  }
+    if (props.image) {
+        html += `<img src="${props.image}" alt="${props.name}" style="max-width: 100%; height: auto; margin-bottom: 10px;">`;
+    }
 
-  if (props.wiki) {
-    html += `<p><a href="${props.wiki}" target="_blank" rel="noopener">Learn more on Wikipedia</a></p>`;
-  }
+    if (props.description) {
+        html += `<p>${props.description}</p>`;
+    }
 
-  sidebarContent.innerHTML = html;
-  sidebar.classList.remove("hidden");
+    if (props.wiki) {
+        html += `<p><a href="${props.wiki}" target="_blank" rel="noopener">Learn more on Wikipedia</a></p>`;
+    }
+
+    sidebarContent.innerHTML = html;
+    sidebar.classList.remove("hidden");
 }
 
 // Close sidebar
 closeSidebar.onclick = () => {
-  sidebar.classList.add("hidden");
+    sidebar.classList.add("hidden");
 };
 
 // Close sidebar on ESC key
 document.addEventListener("keydown", (e) => {
-  if (e.key === "Escape") {
-    sidebar.classList.add("hidden");
-  }
+    if (e.key === "Escape") {
+        sidebar.classList.add("hidden");
+    }
 });

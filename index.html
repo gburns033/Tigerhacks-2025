@@ -13,6 +13,10 @@
         <div id="cesiumContainer"></div>
         <!-- Waypoint UI panel -->
         <div id="panel">
+            <!-- Panel hide/show toggle -->
+            <button id="panelToggle" class="panel-toggle" title="Hide panel">
+                ☰
+            </button>
             <h1>
                 Mars Route Planner
                 <span class="pill">A*</span>
@@ -80,10 +84,12 @@
                 <h3>Solve</h3>
                 <div class="row">
                     <button id="solve">
-                        <i data-feather="activity"></i> Solve
+                        <i data-feather="activity"></i>
+                        Solve
                     </button>
                     <button id="download" class="secondary">
-                        <i data-feather="download"></i> Download
+                        <i data-feather="download"></i>
+                        Download
                     </button>
                 </div>
                 <div id="status">Status: Create a route first.</div>
@@ -94,7 +100,17 @@
             <button id="closeSidebar" class="close-btn">✕</button>
             <div id="sidebarContent"></div>
         </div>
-        <!-- Your environment values (TITILER_URL / FLASK_URL / MARS_TIF) -->
+        <script>
+const panel = document.getElementById('panel');
+const toggleBtn = document.getElementById('panelToggle');
+
+toggleBtn.onclick = () => {
+  const isHidden = panel.classList.toggle('hidden');
+  toggleBtn.title = isHidden ? 'Show panel' : 'Hide panel';
+  // Change icon visually
+  toggleBtn.textContent = isHidden ? '☰' : '✕';
+};
+        </script>
         <script src="scripts/config.js"></script>
         <script src="scripts/setup.js"></script>
         <script src="scripts/view.js"></script>

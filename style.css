@@ -23,6 +23,9 @@ body,
   border: 2px solid #2a3357;
   border-radius: 14px;
   box-shadow: 0 10px 30px rgba(0, 0, 0, 0.35);
+  transform: translateX(0);
+  transition: transform 0.35s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.35s ease;
+  opacity: 1;
 }
 
 #panel h1 {
@@ -67,7 +70,8 @@ body,
   height: 18px;
   stroke-width: 2.2;
   vertical-align: middle;
-  margin-top: -1px; /* optical alignment with text baseline */
+  margin-top: -1px;
+  /* optical alignment with text baseline */
   flex-shrink: 0;
 }
 
@@ -88,15 +92,14 @@ body,
 #panel input[type="range"] {
   -webkit-appearance: none;
   width: 160px;
-  height: 5px;                      /* Track height */
+  height: 5px;
+  /* Track height */
   border-radius: 4px;
-  background: linear-gradient(
-    to right,
-    #7aa2ff 0%,
-    #7aa2ff var(--range-percent, 50%),
-    #1a203b var(--range-percent, 50%),
-    #1a203b 100%
-  );
+  background: linear-gradient(to right,
+      #7aa2ff 0%,
+      #7aa2ff var(--range-percent, 50%),
+      #1a203b var(--range-percent, 50%),
+      #1a203b 100%);
   outline: none;
   cursor: pointer;
 }
@@ -110,7 +113,8 @@ body,
   background: #7aa2ff;
   border: 2px solid #d3e0ff;
   cursor: pointer;
-  margin-top: -5px; /* centers thumb */
+  margin-top: -5px;
+  /* centers thumb */
   transition: background 0.2s ease, transform 0.1s ease;
 }
 
@@ -140,6 +144,7 @@ body,
   cursor: pointer;
   transition: background 0.2s ease, transform 0.1s ease;
 }
+
 #panel input[type="range"]::-moz-range-thumb:hover {
   transform: scale(1.1);
 }
@@ -168,6 +173,39 @@ body,
   border-top: 1px dashed #2b3663;
   padding-top: 6px;
   font-size: 12px;
+}
+
+/* Panel show/hide toggle button ------------------------------------------ */
+.panel-toggle {
+  position: absolute;
+  top: 14px;
+  left: 380px;
+  /* sits just beside your 360‑px panel */
+  z-index: 1001;
+  width: 26px;
+  height: 26px;
+  background: #1c2340;
+  border: 1px solid #2b3663;
+  border-radius: 6px;
+  color: #e8ecff;
+  font-size: 18px;
+  line-height: 22px;
+  cursor: pointer;
+  transition: left 0.3s ease, background 0.2s ease;
+}
+
+.panel-toggle:hover {
+  background: #2a3357;
+}
+
+/* When panel is hidden */
+#panel.hidden {
+  transform: translateX(-370px);
+  transition: transform 0.3s ease;
+}
+
+#panel.hidden+.panel-toggle {
+  left: 14px;
 }
 
 /* Small legend bubble (optional) ----------------------------------------- */

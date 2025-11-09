@@ -1,27 +1,291 @@
 {
   "type": "FeatureCollection",
   "features": [
-    { "type": "Feature", "properties": { "name": "Olympus Mons" }, "geometry": { "type": "Point", "coordinates": [-133.8, 18.65] } },
-    { "type": "Feature", "properties": { "name": "Valles Marineris" }, "geometry": { "type": "Point", "coordinates": [-59.2, -14.6] } },
-    { "type": "Feature", "properties": { "name": "Gale Crater" }, "geometry": { "type": "Point", "coordinates": [137.4, -4.59] } },
-    { "type": "Feature", "properties": { "name": "Elysium Mons" }, "geometry": { "type": "Point", "coordinates": [147.21, 25.02] } },
-    { "type": "Feature", "properties": { "name": "Hellas Planitia" }, "geometry": { "type": "Point", "coordinates": [70.0, -42.68] } },
-    { "type": "Feature", "properties": { "name": "Isidis Planitia" }, "geometry": { "type": "Point", "coordinates": [87.0, 12.9] } },
-    { "type": "Feature", "properties": { "name": "Syrtis Major Planum" }, "geometry": { "type": "Point", "coordinates": [69.5, 10.0] } },
-    { "type": "Feature", "properties": { "name": "Arsia Mons" }, "geometry": { "type": "Point", "coordinates": [-120.7, -8.35] } },
-    { "type": "Feature", "properties": { "name": "Ascraeus Mons" }, "geometry": { "type": "Point", "coordinates": [-104.5, 11.9] } },
-    { "type": "Feature", "properties": { "name": "Pavonis Mons" }, "geometry": { "type": "Point", "coordinates": [-113.0, 0.8] } },
-    { "type": "Feature", "properties": { "name": "Noctis Labyrinthus" }, "geometry": { "type": "Point", "coordinates": [-103.0, -7.0] } },
-    { "type": "Feature", "properties": { "name": "Utopia Planitia" }, "geometry": { "type": "Point", "coordinates": [118.0, 47.0] } },
-    { "type": "Feature", "properties": { "name": "Terra Sabaea" }, "geometry": { "type": "Point", "coordinates": [40.0, -10.0] } },
-    { "type": "Feature", "properties": { "name": "Arabia Terra" }, "geometry": { "type": "Point", "coordinates": [-20.0, 20.0] } },
-    { "type": "Feature", "properties": { "name": "Acidalia Planitia" }, "geometry": { "type": "Point", "coordinates": [-9.0, 56.7] } },
-    { "type": "Feature", "properties": { "name": "Tempe Terra" }, "geometry": { "type": "Point", "coordinates": [-75.0, 40.0] } },
-    { "type": "Feature", "properties": { "name": "Argyre Planitia" }, "geometry": { "type": "Point", "coordinates": [-44.0, -49.0] } },
-    { "type": "Feature", "properties": { "name": "Tharsis Tholus" }, "geometry": { "type": "Point", "coordinates": [-91.8, 13.5] } },
-    { "type": "Feature", "properties": { "name": "Promethei Terra" }, "geometry": { "type": "Point", "coordinates": [115.0, -60.0] } },
-    { "type": "Feature", "properties": { "name": "Cydonia Mensae" }, "geometry": { "type": "Point", "coordinates": [0.3, 45.8] } },
-    { "type": "Feature", "properties": { "name": "Planum Boreum (North Pole)" }, "geometry": { "type": "Point", "coordinates": [0.0, 90.0] } },
-    { "type": "Feature", "properties": { "name": "Planum Australe (South Pole)" }, "geometry": { "type": "Point", "coordinates": [0.0, -90.0] } }
+    {
+      "type": "Feature",
+      "properties": {
+        "name": "Olympus Mons",
+        "description": "Olympus Mons is a large shield volcano on Mars. It is over 21.9 km (13.6 mi; 72,000 ft) high as measured by the Mars Orbiter Laser Altimeter (MOLA), about 2.5 times the elevation of Mount Everest above sea level. It is Mars's tallest volcano, its tallest planetary mountain, and is approximately tied with Rheasilvia on Vesta as the tallest mountain currently discovered in the Solar System. It is associated with the volcanic region of Tharsis Montes. It last erupted 25 million years ago.",
+        "image": "./images/olympus_mons.webp",
+        "wiki": "https://en.wikipedia.org/wiki/Olympus_Mons"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [-133.8, 18.65]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "name": "Valles Marineris",
+        "description": "Valles Marineris (Latin for Mariner Valleys, named after the Mariner 9 Mars orbiter of 1971–72 which discovered it) is a system of canyons that runs along the Martian surface east of the Tharsis region. At more than 4,000 km (2,500 mi) long, 200 km (120 mi) wide and up to 7 km (23,000 ft) deep, Valles Marineris is the largest canyon in the Solar System.",
+        "image": "./images/valles_marineris.jpg",
+        "wiki": "https://en.wikipedia.org/wiki/Valles_Marineris"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [-59.2, -14.6]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "name": "Gale Crater",
+        "description": "Gale is a crater, and probable dry lake, in the northwestern part of the Aeolis quadrangle on Mars. It is 154 km (96 mi) in diameter and estimated to be about 3.5–3.8 billion years old. The crater was named after Walter Frederick Gale, an amateur astronomer from Sydney, Australia, who observed Mars in the late 19th century.",
+        "image": "./images/gale_crater.jpg",
+        "wiki": "https://en.wikipedia.org/wiki/Gale_(crater)"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [137.4, -4.59]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "name": "Elysium Mons",
+        "description": "Elysium Mons is a volcano on Mars located in the volcanic province Elysium, in the Martian eastern hemisphere. It stands about 12.6 km (41,000 ft) above its base, and about 14.1 km (46,000 ft) above the Martian datum, making it the third tallest Martian mountain in terms of relief and the fourth highest in elevation. Its diameter is about 240 km (150 mi), with a summit caldera about 14 km (8.7 mi) across.",
+        "image": "./images/elysium_mons.webp",
+        "wiki": "https://en.wikipedia.org/wiki/Elysium_Mons"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [147.21, 25.02]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "name": "Hellas Planitia",
+        "description": "Hellas Planitia is a plain located within the huge, roughly circular impact basin Hellas located in the southern hemisphere of the planet Mars. The basin floor is about 7,152 m (23,465 ft) deep, 3,000 m (9,800 ft) deeper than the Moon's South Pole-Aitken basin, and extends about 2,300 km (1,400 mi) east to west. It is centered at 42.4°S 70.5°E. It features the lowest point on Mars, serves as a known source of global dust storms, and may have contained lakes and glaciers.",
+        "image": "./images/hellas_planitia.jpg",
+        "wiki": "https://en.wikipedia.org/wiki/Hellas_Planitia"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [70.0, -42.68]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "name": "Isidis Planitia",
+        "description": "Isidis Planitia is a plain located within a giant impact basin on Mars, located partly in the Syrtis Major quadrangle and partly in the Amenthes quadrangle. At approximately 1,900 km (1,200 mi) in diameter, it is the third-largest confirmed impact structure on the planet, after the Hellas and Utopia basins. Isidis was likely the last major basin to be formed on Mars, having formed approximately 3.9 billion years ago during the Noachian period, by an impactor around 200 kilometres (120 mi) in diameter.",
+        "image": "./images/isidis_planitia.jpg",
+        "wiki": "https://en.wikipedia.org/wiki/Isidis_Planitia"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [87.0, 12.9]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "name": "Syrtis Major Planum",
+        "description": "Syrtis Major Planum (formerly Syrtis Major Planitia) is a massive shield volcano in the eastern hemisphere of Mars. A dark spot (an albedo feature), Syrtis Major Planum is located at the boundary between the northern lowlands and southern highlands of Mars just west of the impact basin Isidis in the Syrtis Major quadrangle. The dark color of Syrtis Major Planum comes from the basaltic volcanic rock of the region and the relative lack of dust.",
+        "image": "./images/syrtis_major_planum.jpg",
+        "wiki": "https://en.wikipedia.org/wiki/Syrtis_Major_Planum"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [69.5, 10.0]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "name": "Arsia Mons",
+        "description": "Arsia Mons is the southernmost of three volcanoes (collectively known as Tharsis Montes) on the Tharsis bulge near the equator of the planet Mars. To its north is Pavonis Mons, and north of that is Ascraeus Mons. The tallest volcano in the Solar System, Olympus Mons, is to its northwest. Its name comes from a corresponding albedo feature on a map by Giovanni Schiaparelli, which he named in turn after the legendary Roman forest of Arsia Silva.",
+        "image": "./images/arsia_mons.jpg",
+        "wiki": "https://en.wikipedia.org/wiki/Arsia_Mons"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [-120.7, -8.35]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "name": "Ascraeus Mons",
+        "description": "Ascraeus Mons is a large shield volcano located in the Tharsis region of the planet Mars. It is the northernmost and tallest of three shield volcanoes collectively known as the Tharsis Montes.",
+        "image": "./images/ascraeus_mons.webp",
+        "wiki": "https://en.wikipedia.org/wiki/Ascraeus_Mons"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [-104.5, 11.9]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "name": "Pavonis Mons",
+        "description": "Pavonis Mons (Latin for peacock mountain) is a large shield volcano located in the Tharsis region of the planet Mars. It is the middle member of a chain of three volcanic mountains (collectively known as the Tharsis Montes) that straddle the Martian equator. The equatorial location of its peak and its height make it the ideal terminus for a space elevator, and it has often been proposed as a space elevator location, especially in science fiction. It is also an ideal location for a Sky Ramp.",
+        "image": "./images/pavonis_mons.jpg",
+        "wiki": "https://en.wikipedia.org/wiki/Pavonis_Mons"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [-113.0, 0.8]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "name": "Noctis Labyrinthus",
+        "description": "Noctis Labyrinthus (Latin for 'Labyrinth of the Night') is a region of Mars located in the Phoenicis Lacus quadrangle, between Valles Marineris and the Tharsis upland. The region is notable for its maze-like system of deep, steep-walled valleys. The valleys and canyons of this region formed by faulting and many show classic features of grabens, with the upland plain surface preserved on the valley floor.",
+        "image": "./images/moctis_labyrinthus.jpg",
+        "wiki": "https://en.wikipedia.org/wiki/Noctis_Labyrinthus"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [-103.0, -7.0]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "name": "Utopia Planitia",
+        "description": "Utopia Planitia (Greek and Latin: 'Utopia Land Plain') is a large plain within Utopia, the largest recognized impact basin on Mars and in the Solar System with an estimated diameter of 3,300 km (2,100 mi). It is the Martian region where the Viking 2 lander touched down and began exploring on September 3, 1976, and the Zhurong rover touched down on May 14, 2021, as a part of the Tianwen-1 mission.",
+        "image": "./images/utopia_planitia.jpg",
+        "wiki": "https://en.wikipedia.org/wiki/Utopia_Planitia"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [118.0, 47.0]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "name": "Terra Sabaea",
+        "description": "Terra Sabaea is a large area on Mars. Its coordinates are 2°N 42°E and it covers 4,700 kilometres (2,900 mi) at its broadest extent. It was named in 1979 after a classic albedo feature on the planet. Terra Sabaea is fairly large and parts of it are found in five quadrangles: Arabia quadrangle, Syrtis Major quadrangle, Iapygia quadrangle, Ismenius Lacus quadrangle, and Sinus Sabaeus quadrangle.",
+        "image": "./images/terra_sabaea.jpg",
+        "wiki": "https://en.wikipedia.org/wiki/Terra_Sabaea"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [40.0, -10.0]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "name": "Arabia Terra",
+        "description": "Arabia Terra is a large upland region in the north of Mars that lies mostly in the Arabia quadrangle, but a small part is in the Mare Acidalium quadrangle. It is densely cratered and heavily eroded. This battered topography indicates great age, and Arabia Terra is presumed to be one of the oldest terrains on the planet. It covers as much as 4,500 km (2,800 mi) at its longest extent, centered roughly at 21°N 6°E with its eastern and southern regions rising 4 km (13,000 ft) above the north-west.",
+        "image": "./images/arabia_terra.jpg",
+        "wiki": "https://en.wikipedia.org/wiki/Arabia_Terra"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [-20.0, 20.0]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "name": "Acidalia Planitia",
+        "description": "Acidalia Planitia is a plain on Mars, between the Tharsis volcanic province and Arabia Terra to the north of Valles Marineris, centered at 49.8°N 339.3°E. Most of this region is found in the Mare Acidalium quadrangle, but a small part is in the Ismenius Lacus quadrangle. The plain contains the famous Cydonia region at the contact with the heavily cratered highland terrain.",
+        "image": "./images/acidalia_planitia.jpg",
+        "wiki": "https://en.wikipedia.org/wiki/Acidalia_Planitia"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [-9.0, 56.7]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "name": "Tempe Terra",
+        "description": "Tempe Terra is a heavily cratered highland region in the northern hemisphere of the planet Mars. Located at the northeastern edge of the Tharsis volcanic province, Tempe Terra is notable for its high degree of crustal fracturing and deformation. The region also contains many small shield volcanoes, lava flows, and other volcanic structures.",
+        "image": "./images/tempe_terra.jfif",
+        "wiki": "https://en.wikipedia.org/wiki/Tempe_Terra"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [-75.0, 40.0]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "name": "Argyre Planitia",
+        "description": "Argyre Planitia is a plain located within the impact basin Argyre in the southern highlands of Mars. Its name comes from a map produced by Giovanni Schiaparelli in 1877; it refers to Argyre, a mythical island of silver in Greek mythology.",
+        "image": "./images/argyre_planitia.jpg",
+        "wiki": "https://en.wikipedia.org/wiki/Argyre_Planitia"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [-44.0, -49.0]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "name": "Tharsis Tholus",
+        "description": "Tharsis Tholus is an intermediate-sized shield volcano located in the eastern Tharsis region of the planet Mars. The volcano was discovered by the Mariner 9 spacecraft in 1972 and originally given the informal name Volcano 7. In 1973, the International Astronomical Union (IAU) officially designated it Tharsis Tholus. In planetary geology, tholus (pl. tholi) is the term for a small domical mountain, usually a volcano.",
+        "image": "./images/tharsis_tholus.jpg",
+        "wiki": "https://en.wikipedia.org/wiki/Tharsis_Tholus"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [-91.8, 13.5]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "name": "Promethei Terra",
+        "description": "Promethei Terra is a large Martian region covering 3300 km at its broadest extent. It lies to the east of the massive Hellas basin. Like much of the southern part of the planet it is a heavily cratered, highland region. Promethei Terra was named for a classic albedo feature of Mars, with the original name derived from that of the Greek god Prometheus. Promethei Terra lies mostly in the Hellas quadrangle of Mars.",
+        "image": "./images/promethei_terra.jfif",
+        "wiki": "https://en.wikipedia.org/wiki/Promethei_Terra"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [115.0, -60.0]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "name": "Cydonia",
+        "description": "Cydonia is a region on the planet Mars that has attracted both scientific and popular interest. The name originally referred to the albedo feature (distinctively coloured area) that was visible from earthbound telescopes. The area borders the plains of Acidalia Planitia and the highlands of Arabia Terra. Cydonia contains the 'Face on Mars', located about halfway between the craters Arandas and Bamberg.",
+        "image": "./images/cydonia.jpg",
+        "wiki": "https://en.wikipedia.org/wiki/Cydonia_(Mars)"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [0.3, 45.8]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "name": "Planum Boreum",
+        "description": "Planum Boreum (Latin: 'the northern plain') is the northern polar plain on Mars. It extends northward from roughly 80°N and is centered at 88.0°N 15.0°E. Surrounding the high polar plain is a flat and featureless lowland plain called Vastitas Borealis which extends for approximately 1500 kilometers southwards, dominating the northern hemisphere.",
+        "image": "./images/planum_boreum.jpg",
+        "wiki": "https://en.wikipedia.org/wiki/Planum_Boreum"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [0.0, 90.0]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "name": "Planum Australe",
+        "description": "Planum Australe (Latin: 'the southern plain') is the southern polar plain on Mars. It extends southward of roughly 75°S and is centered at 83.9°S 160.0°E. The geology of this region was to be explored by the failed NASA mission Mars Polar Lander, which lost contact on entry into the Martian atmosphere.",
+        "image": "./images/planum_australe.jpg",
+        "wiki": "https://en.wikipedia.org/wiki/Planum_Australe"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [0.0, -90.0]
+      }
+    }
   ]
 }

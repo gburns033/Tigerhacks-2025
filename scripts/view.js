@@ -1,0 +1,94 @@
+// Mars ellipsoid
+viewer.scene.globe.ellipsoid = new Cesium.Ellipsoid(3396190.0, 3396190.0, 3376200.0);
+// Camera limits
+viewer.scene.screenSpaceCameraController.minimumZoomDistance = 4.0e5;
+viewer.scene.screenSpaceCameraController.maximumZoomDistance = 3.0e7;
+
+// Raster imagery
+viewer.imageryLayers.addImageryProvider(
+    new Cesium.UrlTemplateImageryProvider({
+        url: tileUrl,
+        tilingScheme: new Cesium.GeographicTilingScheme(),
+        rectangle: Cesium.Rectangle.fromDegrees(-180, -90, 180, 90),
+        credit: "Mars 6.25° data via TiTiler + Flask",
+    })
+);
+
+viewer.scene.fog.enabled = false;
+viewer.scene.globe.showGroundAtmosphere = false;
+if (viewer.scene.skyAtmosphere) viewer.scene.skyAtmosphere.show = false;
+
+const imageryLayer = viewer.imageryLayers.get(0);
+imageryLayer.alpha = 0.9;
+imageryLayer.brightness = 1.1;
+imageryLayer.saturation = 0.4;
+
+Cesium.Camera.DEFAULT_VIEW_RECTANGLE = Cesium.Rectangle.fromDegrees(-133, 18, -133, 18);
+
+// ---------- Mouse coordinate readout (kept) ----------
+const coordLabel = document.getElementById("coordLabel");
+const handler = new Cesium.ScreenSpaceEventHandler(viewer.scene.canvas);
+handler.setInputAction((movement) => {
+    const ray = viewer.camera.getPickRay(movement.endPosition);
+    const cartesian = viewer.scene.globe.pick(ray, viewer.scene);
+    if (cartesian) {
+        const carto = viewer.scene.globe.ellipsoid.cartesianToCartographic(cartesian);
+        const lat = Cesium.Math.toDegrees(carto.latitude).toFixed(5);
+        const lon = Cesium.Math.toDegrees(carto.longitude).toFixed(5);
+        coordLabel.textContent = `Lon: ${lon}°, Lat: ${lat}°`;
+    } else {
+        coordLabel.textContent = "Off planet";
+    }
+}, Cesium.ScreenSpaceEventType.MOUSE_MOVE);
+
+// Auto-rotation and zoom out after idle time
+let idleTimeout;
+let isRotating = false;
+let hasZoomedOut = false;
+const IDLE_TIME = 3000; // 3 seconds of idle time before zoom and rotation starts
+const ROTATION_SPEED = 0.001; // Rotation speed
+
+function startRotation() {
+    if (!isRotating) {
+        isRotating = true;
+
+        // Zoom out if we haven't already
+        if (!hasZoomedOut) {
+            hasZoomedOut = true;
+            viewer.camera.flyTo({
+                destination: Cesium.Cartesian3.fromDegrees(-133.3, 18.4, 15_000_000),
+                duration: 3, // 3 seconds to zoom out
+            });
+        }
+
+        viewer.clock.onTick.addEventListener(rotateCamera);
+    }
+}
+
+function stopRotation() {
+    if (isRotating) {
+        isRotating = false;
+        hasZoomedOut = false;
+        viewer.clock.onTick.removeEventListener(rotateCamera);
+    }
+}
+
+function rotateCamera() {
+    const camera = viewer.camera;
+    camera.rotate(Cesium.Cartesian3.UNIT_Z, ROTATION_SPEED);
+}
+
+function resetIdleTimer() {
+    stopRotation();
+    clearTimeout(idleTimeout);
+    idleTimeout = setTimeout(startRotation, IDLE_TIME);
+}
+
+// Stop rotation and reset timer on any user interaction
+viewer.scene.canvas.addEventListener('mousedown', resetIdleTimer);
+viewer.scene.canvas.addEventListener('mousemove', resetIdleTimer);
+viewer.scene.canvas.addEventListener('wheel', resetIdleTimer);
+viewer.scene.canvas.addEventListener('touchstart', resetIdleTimer);
+
+// Start the initial idle timer
+resetIdleTimer();

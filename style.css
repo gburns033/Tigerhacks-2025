@@ -1,0 +1,118 @@
+html,
+body,
+#cesiumContainer {
+    width: 100%;
+    height: 100%;
+    margin: 0;
+    padding: 0;
+    overflow: hidden;
+    display: block;
+}
+
+/* Waypoint control panel (from your other file) */
+#panel {
+    position: absolute;
+    top: 12px;
+    left: 12px;
+    z-index: 1000;
+    width: 360px;
+    padding: 12px 14px;
+    background: #121726;
+    color: #e8ecff;
+    border: 2px solid #2a3357;
+    border-radius: 14px;
+    font-family: Inter, system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, .35);
+}
+
+#panel h1 {
+    margin: 0 0 8px 0;
+    font-size: 16px;
+}
+
+#panel .row {
+    display: flex;
+    gap: 8px;
+    align-items: center;
+    margin: 8px 0;
+    flex-wrap: wrap;
+}
+
+#panel button {
+    background: #7aa2ff;
+    border: none;
+    color: #0c0f17;
+    font-weight: 600;
+    padding: 8px 10px;
+    border-radius: 10px;
+    cursor: pointer;
+}
+
+#panel button.secondary {
+    background: #222a4a;
+    color: #e6ecff;
+    border: 1px solid #2f396b;
+}
+
+#panel label {
+    font-size: 12px;
+    color: #b9c0d9;
+}
+
+#panel input[type="range"] {
+    width: 150px;
+}
+
+#panel .pill {
+    display: inline-block;
+    padding: 2px 8px;
+    border-radius: 999px;
+    background: #1c2340;
+    border: 1px solid #2b3663;
+    font-size: 11px;
+    color: #cdd7ff;
+}
+
+#panel #status {
+    font-size: 12px;
+    color: #9fb2ff;
+    min-height: 1.4em;
+    margin-top: 6px;
+}
+
+#panel #list {
+    max-height: 130px;
+    overflow: auto;
+    border-top: 1px dashed #2b3663;
+    padding-top: 6px;
+    font-size: 12px;
+}
+
+/* Small legend bubble (optional) */
+#legend {
+    position: absolute;
+    bottom: 14px;
+    left: 12px;
+    z-index: 1000;
+    background: #121726;
+    color: #cdd7ff;
+    border: 1px solid #2b3663;
+    padding: 6px 8px;
+    border-radius: 10px;
+    font-size: 12px;
+    font-family: Inter, system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+}
+
+/* Mouse coordinate label */
+#coordLabel {
+    position: absolute;
+    bottom: 10px;
+    left: 10px;
+    padding: 4px 8px;
+    background: rgba(0, 0, 0, 0.6);
+    color: white;
+    font-family: monospace;
+    font-size: 13px;
+    border-radius: 4px;
+    z-index: 1000;
+}

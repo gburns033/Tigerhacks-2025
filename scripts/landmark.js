@@ -1,8 +1,9 @@
 // ---------- Landmark pins (kept from your file) ----------
 function normalizeLon(lonDeg) { return ((lonDeg + 180) % 360) - 180; }
 
-// Inside landmark.js
 let landmarksVisible = true;
+const btnLandmarkToggle = document.getElementById("landmarkToggle");
+btnLandmarkToggle.classList.add("active");
 
 function toggleLandmarks(viewer) {
   landmarksVisible = !landmarksVisible;

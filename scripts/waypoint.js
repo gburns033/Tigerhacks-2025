@@ -52,7 +52,10 @@ btnDownload.onclick = () => {
     return;
   }
 
-  const jsonText = JSON.stringify(lastSolveResult, null, 2);
+ const jsonText = JSON.stringify({
+  ...lastSolveResult,
+  waypoints: waypoints.map(p => ({ lon: p.lon, lat: p.lat }))
+}, null, 2);
   const blob = new Blob([jsonText], { type: "application/json" });
   const a = document.createElement("a");
   a.href = URL.createObjectURL(blob);
@@ -117,6 +120,57 @@ function makeTextBillboard(text) {
 
   return canvas.toDataURL();
 }
+
+const btnImport = document.getElementById("import");
+
+// create hidden file input
+const fileInput = document.createElement("input");
+fileInput.type = "file";
+fileInput.accept = "application/json";
+fileInput.style.display = "none";
+document.body.appendChild(fileInput);
+
+btnImport.onclick = () => fileInput.click();
+
+fileInput.onchange = async e => {
+  const file = e.target.files[0];
+  if (!file) return;
+  try {
+    const text = await file.text();
+    const data = JSON.parse(text);
+    if (!Array.isArray(data.positions)) {
+      status("⚠ Invalid file.");
+      return;
+    }
+
+    // clear existing
+    waypoints.splice(0, waypoints.length);
+    if (solvedEntity) viewer.entities.remove(solvedEntity);
+    viewer.entities.values
+      .filter(e => e.__isWP)
+      .forEach(e => viewer.entities.remove(e));
+
+    // ----- add back user waypoints -----
+    const wpList = data.waypoints || [];
+    if (wpList.length) {
+      wpList.forEach(p => addWaypoint(p.lon, p.lat));
+    } else {
+      // fallback: guess them (first and last of path)
+      const first = data.positions[0];
+      const last = data.positions[data.positions.length - 1];
+      addWaypoint(first.lon, first.lat);
+      addWaypoint(last.lon, last.lat);
+    }
+
+    // ----- draw full route line -----
+    drawSolvedRoute(data.positions);
+    lastSolveResult = data;
+    status("Route imported (" + (wpList.length || 2) + " waypoints).");
+  } catch (err) {
+    console.error(err);
+    status("⚠ Could not import JSON: " + err.message);
+  }
+};
 
 function addWaypoint(lon, lat) {
   const label = waypoints.length === 0 ? "START" :

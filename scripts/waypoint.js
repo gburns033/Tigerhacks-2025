@@ -5,13 +5,12 @@ const btnUndo = $("undo");
 const btnClear = $("clear");
 const btnSolve = $("solve");
 const btnDownload = $("download");
-const grid = $("grid"), gridVal = $("gridVal");
+const grid = $("grid");
 const margin = $("margin"), marginVal = $("marginVal");
 const maxSlope = $("maxSlope"), maxSlopeVal = $("maxSlopeVal");
 const slopeW = $("slopeW"), slopeWVal = $("slopeWVal");
 const statusEl = $("status"), listEl = $("list");
 
-grid.oninput = () => gridVal.textContent = grid.value;
 margin.oninput = () => marginVal.textContent = margin.value;
 maxSlope.oninput = () => maxSlopeVal.textContent = (+maxSlope.value).toFixed(2);
 slopeW.oninput = () => slopeWVal.textContent = (+slopeW.value).toFixed(2);
@@ -119,6 +118,37 @@ handler.setInputAction((movement) => {
   resetIdleTimer(); // any interaction cancels idle rotation
 }, Cesium.ScreenSpaceEventType.LEFT_CLICK);
 
+function autoGridSize(waypoints) {
+  const n = waypoints.length;
+  if (n < 2) return 16;
+
+  const lons = waypoints.map(p => p.lon);
+  const lats = waypoints.map(p => p.lat);
+  const lonMin = Math.min(...lons),
+        lonMax = Math.max(...lons),
+        latMin = Math.min(...lats),
+        latMax = Math.max(...lats);
+
+  const lonSpan = lonMax - lonMin;
+  const latSpan = latMax - latMin;
+  const diagSpan = Math.hypot(lonSpan, latSpan);
+
+  let cellsNeeded = 0;
+  for (let i = 0; i < n - 1; i++) {
+    const dx = waypoints[i + 1].lon - waypoints[i].lon;
+    const dy = waypoints[i + 1].lat - waypoints[i].lat;
+    const seg = Math.hypot(dx, dy);
+    cellsNeeded = Math.max(cellsNeeded, Math.ceil(seg / (diagSpan / (n - 1))));
+  }
+
+  let N = Math.max(16, cellsNeeded + 1);
+
+  const pow2 = x => 2 ** Math.ceil(Math.log2(x));
+  N = pow2(N);
+
+  return Math.min(N, 512);
+}
+
 function drawSolvedRoute(points) {
   if (solvedEntity) { viewer.entities.remove(solvedEntity); solvedEntity = null; }
   const rad = points.flatMap(p => [Cesium.Math.toRadians(p.lon), Cesium.Math.toRadians(p.lat)]);
@@ -159,7 +189,6 @@ async function solveRouteViaAPI(waypoints, gridN, marginKm, maxSlope, slopeW) {
 }
 
 // Initialize slider pills
-gridVal.textContent = grid.value;
 marginVal.textContent = margin.value;
 maxSlopeVal.textContent = (+maxSlope.value).toFixed(2);
 slopeWVal.textContent = (+slopeW.value).toFixed(2);
@@ -169,8 +198,9 @@ $("solve").onclick = async () => {
   if (waypoints.length < 2) { status("Add at least Start and End."); return; }
   status("Solving (local Flask A*)…");
   try {
+    const autoGrid = autoGridSize(waypoints);
     const res = await solveRouteViaAPI(
-      waypoints, +grid.value, +margin.value, +maxSlope.value, +slopeW.value
+      waypoints, autoGrid, +margin.value, +maxSlope.value, +slopeW.value
     );
     drawSolvedRoute(res.positions);
     // Show distance-like cost if present

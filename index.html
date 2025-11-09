@@ -27,7 +27,7 @@
   <script src="config.js"></script>
   <script>
     const { TITILER_URL, FLASK_URL, MARS_TIF } = window.__ENV__;
-    const tileUrl = `${TITILER_URL}/cog/tiles/WorldCRS84Quad/{z}/{x}/{y}@1x?url=${FLASK_URL}/${MARS_TIF}`;
+    const tileUrl = `${TITILER_URL}/cog/tiles/WorldCRS84Quad/{z}/{x}/{y}@1x?url=${FLASK_URL}/${MARS_TIF}&colormap_name=inferno`;
 
   const viewer = new Cesium.Viewer("cesiumContainer", {
     imageryProvider: false,
@@ -55,6 +55,11 @@
         credit: "Mars 6.25° data via TiTiler + Flask",
       })
     );
+
+    const imageryLayer = viewer.imageryLayers.get(0);
+    imageryLayer.alpha = 0.9;
+    imageryLayer.brightness = 1.1;
+    imageryLayer.saturation = 0.4;
 
     viewer.camera.flyTo({
       destination: Cesium.Cartesian3.fromDegrees(137.4, -4.6, 2_000_000),

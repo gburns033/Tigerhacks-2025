@@ -1,4 +1,4 @@
-// ---------- Waypoint + A* (added) ----------
+// region DOM References
 const $ = id => document.getElementById(id);
 const btnAdd = $("toggleAdd");
 const btnUndo = $("undo");
@@ -10,18 +10,26 @@ const margin = $("margin"), marginVal = $("marginVal");
 const maxSlope = $("maxSlope"), maxSlopeVal = $("maxSlopeVal");
 const slopeW = $("slopeW"), slopeWVal = $("slopeWVal");
 const statusEl = $("status"), listEl = $("list");
+// endregion
 
-margin.oninput = () => marginVal.textContent = margin.value;
-maxSlope.oninput = () => maxSlopeVal.textContent = (+maxSlope.value).toFixed(2);
-slopeW.oninput = () => slopeWVal.textContent = (+slopeW.value).toFixed(2);
-function status(msg) { statusEl.textContent = msg || ""; }
+// region UI Reactive Sliders
+margin.oninput = () => (marginVal.textContent = margin.value);
+maxSlope.oninput = () => (maxSlopeVal.textContent = (+maxSlope.value).toFixed(2));
+slopeW.oninput = () => (slopeWVal.textContent = (+slopeW.value).toFixed(2));
+function status(msg) {
+  statusEl.textContent = msg || "";
+}
+// endregion
 
-const waypoints = []; // {lon, lat, entity}
+// region Waypoint State
+const waypoints = [];
 let adding = false;
 let dashedEntity = null;
 let solvedEntity = null;
 let lastSolveResult = null;
+// endregion
 
+// region Waypoint Buttons
 btnAdd.onclick = () => {
   stopRotation();
   adding = !adding;
@@ -33,52 +41,54 @@ btnAdd.onclick = () => {
 btnUndo.onclick = () => {
   const last = waypoints.pop();
   if (last?.entity) viewer.entities.remove(last.entity);
-  redrawDashed(); renderList(); status("Undid last waypoint.");
+  redrawDashed();
+  renderList();
+  status("Undid last waypoint.");
 };
 
 btnClear.onclick = () => {
   waypoints.splice(0, waypoints.length);
   if (dashedEntity) { viewer.entities.remove(dashedEntity); dashedEntity = null; }
   if (solvedEntity) { viewer.entities.remove(solvedEntity); solvedEntity = null; }
-  viewer.entities.values
-    .filter(e => e.__isWP)
-    .forEach(e => viewer.entities.remove(e));
-  renderList(); status("Cleared.");
+  viewer.entities.values.filter(e => e.__isWP).forEach(e => viewer.entities.remove(e));
+  renderList();
+  status("Cleared.");
 };
+// endregion
 
+// region Download Solved Route
 btnDownload.onclick = () => {
-  if (!lastSolveResult) {
-    status("⚠ No solved route to download yet.");
-    return;
-  }
+  if (!lastSolveResult) return status("⚠ No solved route to download yet.");
 
-  const jsonText = JSON.stringify({
-    ...lastSolveResult,
-    waypoints: waypoints.map(p => ({ lon: p.lon, lat: p.lat }))
-  }, null, 2);
+  const jsonText = JSON.stringify(
+    { ...lastSolveResult, waypoints: waypoints.map(p => ({ lon: p.lon, lat: p.lat })) },
+    null,
+    2
+  );
   const blob = new Blob([jsonText], { type: "application/json" });
   const a = document.createElement("a");
   a.href = URL.createObjectURL(blob);
   a.download = "solved_route.json";
   a.click();
   URL.revokeObjectURL(a.href);
-
   status("Downloaded solved route JSON.");
 };
+// endregion
 
+// region Waypoint List + Dashed Line
 function renderList() {
-  if (!waypoints.length) { listEl.innerHTML = "<em>No waypoints yet.</em>"; return; }
-  listEl.innerHTML = waypoints.map((p, i) => {
-    const tag = i === 0 ? "Start" : (i === waypoints.length - 1 ? "End" : `WP${i}`);
-    return `<div>${i + 1}. <b>${tag}</b> — lon ${p.lon.toFixed(4)}, lat ${p.lat.toFixed(4)}</div>`;
-  }).join("");
+  listEl.innerHTML = !waypoints.length
+    ? "<em>No waypoints yet.</em>"
+    : waypoints
+        .map((p, i) => {
+          const tag = i === 0 ? "Start" : i === waypoints.length - 1 ? "End" : `WP${i}`;
+          return `<div>${i + 1}. <b>${tag}</b> — lon ${p.lon.toFixed(4)}, lat ${p.lat.toFixed(4)}</div>`;
+        })
+        .join("");
 }
 
 function redrawDashed() {
-  if (dashedEntity) {
-    viewer.entities.remove(dashedEntity);
-    dashedEntity = null;
-  }
+  if (dashedEntity) { viewer.entities.remove(dashedEntity); dashedEntity = null; }
   if (waypoints.length < 2) return;
 
   const degs = waypoints.flatMap(p => [p.lon, p.lat]);
@@ -103,95 +113,52 @@ function redrawDashed() {
       Math.max(...waypoints.map(p => p.lat))
     );
     viewer.camera.flyTo({ destination: rect, duration: 0.6 });
-  } catch (_) { }
+  } catch (_) {}
 }
+// endregion
 
-// ---------- High-resolution text billboard helper ----------
+// region HD Text Billboard Helper
 function makeTextBillboard(text) {
   const canvas = document.createElement("canvas");
   const ctx = canvas.getContext("2d");
-
   const font = "700 16px Inter, sans-serif";
   ctx.font = font;
   const metrics = ctx.measureText(text);
   canvas.width = metrics.width + 16;
   canvas.height = 28;
-
-  // reapply font after width/height reset
   ctx.font = font;
   ctx.textBaseline = "middle";
-
-  // background rectangle (dark panel color)
   ctx.fillStyle = "#181d30";
   ctx.fillRect(0, 0, canvas.width, canvas.height);
-
-  // text fill
   ctx.fillStyle = "#e7ebfa";
   ctx.fillText(text, 8, canvas.height / 2);
-
   return canvas.toDataURL();
 }
+// endregion
 
+// region JSON Import
 const btnImport = document.getElementById("import");
-
-// create hidden file input
 const fileInput = document.createElement("input");
 fileInput.type = "file";
 fileInput.accept = "application/json";
 fileInput.style.display = "none";
 document.body.appendChild(fileInput);
-
 btnImport.onclick = () => fileInput.click();
 
 fileInput.onchange = async e => {
   const file = e.target.files[0];
   if (!file) return;
-
-  const lowerName = file.name.toLowerCase();
-  const mime = file.type || "";
-  const looksJson =
-    lowerName.endsWith(".json") ||
-    mime === "application/json" ||
-    mime === "text/json";
-
-  if (!looksJson) {
-    status("⚠ Only .json files are supported. You selected: " + file.name);
-    fileInput.value = ""; // reset file picker
-    return;
-  }
-
   try {
     const text = await file.text();
-    if (!text.trim()) {
-      status("⚠ The chosen file is empty.");
-      return;
-    }
-
-    let data;
-    try {
-      data = JSON.parse(text);
-    } catch (parseErr) {
-      status("⚠ File is not valid JSON (" + parseErr.message + ")");
-      return;
-    }
-
-    if (!data || typeof data !== "object") {
-      status("⚠ File does not contain a JSON object.");
-      return;
-    }
-    if (!Array.isArray(data.positions)) {
-      status("⚠ Missing 'positions' array in JSON.");
-      return;
-    }
+    const data = JSON.parse(text || "{}");
+    if (!Array.isArray(data.positions)) throw new Error("Missing positions[] in JSON.");
 
     waypoints.length = 0;
     if (solvedEntity) viewer.entities.remove(solvedEntity);
-    viewer.entities.values
-      .filter(e => e.__isWP)
-      .forEach(e => viewer.entities.remove(e));
+    viewer.entities.values.filter(e => e.__isWP).forEach(e => viewer.entities.remove(e));
 
     const wp = Array.isArray(data.waypoints) ? data.waypoints : [];
-    if (wp.length > 0) wp.forEach(p => addWaypoint(p.lon, p.lat));
+    if (wp.length) wp.forEach(p => addWaypoint(p.lon, p.lat));
     else {
       const first = data.positions[0];
       const last = data.positions[data.positions.length - 1];
@@ -201,37 +168,30 @@ fileInput.onchange = async e => {
 
     drawSolvedRoute(data.positions);
     lastSolveResult = data;
-
     stopRotation();
-
-    status(
-      `Imported route with ${wp.length || 2} waypoint${(wp.length || 2) > 1 ? "s" : ""
-      } (${data.positions.length} path points).`
-    );
+    status(`Imported route with ${wp.length || 2} waypoint(s) (${data.positions.length} path points).`);
   } catch (err) {
-    console.error(err);
     status("❌ Import failed: " + err.message);
   } finally {
-    fileInput.value = ""; // reset so same file can be chosen again
+    fileInput.value = "";
   }
 };
+// endregion
 
+// region Dashed Line Visibility
 const dashToggle = document.getElementById("dashToggle");
 let dashedVisible = true;
-
-// initialize
 dashToggle.classList.toggle("active", dashedVisible);
 dashToggle.title = dashedVisible ? "Hide dashed line" : "Show dashed line";
-
-// handle click
 dashToggle.onclick = () => {
   dashedVisible = !dashedVisible;
   dashToggle.classList.toggle("active", dashedVisible);
   dashToggle.title = dashedVisible ? "Hide dashed line" : "Show dashed line";
-
   if (dashedEntity) dashedEntity.show = dashedVisible;
 };
+// endregion
 
+// region Waypoint Creation
 function addWaypoint(lon, lat) {
   const entity = viewer.entities.add({
     __isWP: true,
@@ -261,44 +221,37 @@ function addWaypoint(lon, lat) {
 
   waypoints.push({ lon, lat, entity });
   waypoints.forEach((wp, i) => {
-    let tag;
-    if (i === 0) tag = "START";
-    else if (i === waypoints.length - 1) tag = "END";
-    else tag = `WP${i}`;
+    const tag = i === 0 ? "START" : i === waypoints.length - 1 ? "END" : `WP${i}`;
     wp.entity.label.text = `${tag}\n${wp.lon.toFixed(4)}, ${wp.lat.toFixed(4)}`;
   });
-
   renderList();
   redrawDashed();
 }
+// endregion
 
-// Reuse existing handler; add LEFT_CLICK for waypoint placement
-handler.setInputAction((movement) => {
+// region Map Click Handling
+handler.setInputAction(mov => {
   if (!adding) return;
   const ellipsoid = viewer.scene.globe.ellipsoid;
-  const cart = viewer.camera.pickEllipsoid(movement.position, ellipsoid) || viewer.scene.pickPosition(movement.position);
+  const cart = viewer.camera.pickEllipsoid(mov.position, ellipsoid) || viewer.scene.pickPosition(mov.position);
   if (!cart) return;
   const carto = Cesium.Cartographic.fromCartesian(cart, ellipsoid);
-  const lon = Cesium.Math.toDegrees(carto.longitude);
-  const lat = Cesium.Math.toDegrees(carto.latitude);
-  addWaypoint(lon, lat);
+  addWaypoint(
+    Cesium.Math.toDegrees(carto.longitude),
+    Cesium.Math.toDegrees(carto.latitude)
+  );
 }, Cesium.ScreenSpaceEventType.LEFT_CLICK);
+// endregion
 
+// region Auto‑grid Estimator
 function autoGridSize(waypoints) {
   const n = waypoints.length;
   if (n < 2) return 16;
-
   const lons = waypoints.map(p => p.lon);
   const lats = waypoints.map(p => p.lat);
-  const lonMin = Math.min(...lons),
-    lonMax = Math.max(...lons),
-    latMin = Math.min(...lats),
-    latMax = Math.max(...lats);
-
-  const lonSpan = lonMax - lonMin;
-  const latSpan = latMax - latMin;
+  const lonSpan = Math.max(...lons) - Math.min(...lons);
+  const latSpan = Math.max(...lats) - Math.min(...lats);
   const diagSpan = Math.hypot(lonSpan, latSpan);
-
   let cellsNeeded = 0;
   for (let i = 0; i < n - 1; i++) {
     const dx = waypoints[i + 1].lon - waypoints[i].lon;
@@ -306,25 +259,22 @@ function autoGridSize(waypoints) {
     const seg = Math.hypot(dx, dy);
     cellsNeeded = Math.max(cellsNeeded, Math.ceil(seg / (diagSpan / (n - 1))));
   }
-
   let N = Math.max(16, cellsNeeded + 1);
-
   const pow2 = x => 2 ** Math.ceil(Math.log2(x));
   N = pow2(N);
-
   return Math.min(N, 512);
 }
+// endregion
 
+// region Route Rendering
 function drawSolvedRoute(points) {
-  if (solvedEntity) { viewer.entities.remove(solvedEntity); solvedEntity = null; }
+  if (solvedEntity) viewer.entities.remove(solvedEntity);
   const rad = points.flatMap(p => [Cesium.Math.toRadians(p.lon), Cesium.Math.toRadians(p.lat)]);
   solvedEntity = viewer.entities.add({
     polyline: {
       positions: Cesium.Cartesian3.fromRadiansArray(rad),
       width: 6,
-      material: new Cesium.ColorMaterialProperty(
-        Cesium.Color.fromCssColorString("#7aa2ff").withAlpha(0.95)
-      ),
+      material: new Cesium.ColorMaterialProperty(Cesium.Color.fromCssColorString("#7aa2ff").withAlpha(0.95)),
       clampToGround: false,
       arcType: Cesium.ArcType.GEODESIC,
       granularity: Cesium.Math.RADIANS_PER_DEGREE / 10
@@ -338,8 +288,9 @@ function drawSolvedRoute(points) {
   );
   viewer.camera.flyTo({ destination: rect, duration: 0.8 });
 }
+// endregion
 
-// Local A* API (server-side): POST /astar/solve
+// region Flask A* API
 async function solveRouteViaAPI(waypoints, gridN, marginKm, maxSlope, slopeW, costMode = "slope") {
   const payload = {
     positions: waypoints.map(p => ({ lon: p.lon, lat: p.lat })),
@@ -349,56 +300,37 @@ async function solveRouteViaAPI(waypoints, gridN, marginKm, maxSlope, slopeW, co
     slope_weight: slopeW,
     cost: costMode
   };
-
   const resp = await fetch(`${FLASK_URL}/astar/solve`, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify(payload)
   });
-
   const js = await resp.json();
   if (!resp.ok || js.error) throw new Error(js.error || "A* failed");
-
-  // If energy mode, add readable units
-  if (costMode === "energy") {
-    js.total_energy_kWh = (js.total_cost_m ?? 0) / 3.6e6;
-  }
-
+  if (costMode === "energy") js.total_energy_kWh = (js.total_cost_m ?? 0) / 3.6e6;
   return js;
 }
+// endregion
 
-// Initialize slider pills
+// region Initialization
 marginVal.textContent = margin.value;
 maxSlopeVal.textContent = (+maxSlope.value).toFixed(2);
 slopeWVal.textContent = (+slopeW.value).toFixed(2);
 
-// Solve button
 $("solve").onclick = async () => {
-  if (waypoints.length < 2) { status("Add at least two waypoints."); return; }
+  if (waypoints.length < 2) return status("Add at least two waypoints.");
   status("Solving (local Flask A*)…");
   try {
     const autoGrid = autoGridSize(waypoints);
     const costMode = document.getElementById("costMode").value;
-    const res = await solveRouteViaAPI(
-      waypoints, autoGrid, +margin.value, +maxSlope.value, +slopeW.value, costMode
-    );
+    const res = await solveRouteViaAPI(waypoints, autoGrid, +margin.value, +maxSlope.value, +slopeW.value, costMode);
     lastSolveResult = res;
     drawSolvedRoute(res.positions);
-    // Show distance and/or energy if present
-    let msg = "A* solved.";
-
-    switch (costMode) {
-      case "energy":
-        status(`A* total energy ≈ ${res.total_energy_kWh?.toFixed(3) ?? "—"} kWh`);
-        return;
-      case "slope":
-      default:
-        status(`A* total distance ≈ ${(res.total_cost_m / 1000).toFixed(2)} km`);
-        return;
-    }
-
+    if (costMode === "energy")
+      status(`A* total energy ≈ ${res.total_energy_kWh?.toFixed(3) ?? "—"} kWh`);
+    else status(`A* total distance ≈ ${(res.total_cost_m / 1000).toFixed(2)} km`);
   } catch (e) {
-    console.error(e);
     status("⚠ " + e.message);
   }
-}
+};
+// endregion

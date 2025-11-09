@@ -2,8 +2,7 @@
 <html lang="en">
     <head>
         <meta charset="UTF-8">
-        <title>Mars Viewer — A* Route Planner</title>
-        <!-- CesiumJS -->
+        <title>RedAtlas</title>
         <script src="https://cesium.com/downloads/cesiumjs/releases/1.123/Build/Cesium/Cesium.js" rel="preload"></script>
         <link href="https://cesium.com/downloads/cesiumjs/releases/1.123/Build/Cesium/Widgets/widgets.css" rel="stylesheet">
         <link rel="stylesheet" href="style.css">
@@ -11,7 +10,6 @@
     </head>
     <body>
         <div id="cesiumContainer"></div>
-        <!-- Waypoint UI panel -->
         <div id="panel">
             <h1>
                 Mars Route Planner
@@ -106,7 +104,6 @@
                 <div id="status">Status: Create a route first.</div>
             </section>
         </div>
-        <!-- Panel hide/show toggle -->
         <button id="panelToggle" class="panel-toggle" title="Hide panel">
             ✕
         </button>
@@ -122,11 +119,9 @@
         <script>
 const panel = document.getElementById('panel');
 const toggleBtn = document.getElementById('panelToggle');
-
 toggleBtn.onclick = () => {
   const isHidden = panel.classList.toggle('hidden');
   toggleBtn.title = isHidden ? 'Show panel' : 'Hide panel';
-  // Change icon visually
   toggleBtn.textContent = isHidden ? '☰' : '✕';
 };
         </script>

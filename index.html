@@ -1,12 +1,13 @@
 <!DOCTYPE html>
 <html lang="en">
-    <head>
-        <meta charset="UTF-8">
-        <title>Mars Viewer</title>
-        <!-- Cesium library -->
-        <script src="https://cesium.com/downloads/cesiumjs/releases/1.123/Build/Cesium/Cesium.js"></script>
-        <link href="https://cesium.com/downloads/cesiumjs/releases/1.123/Build/Cesium/Widgets/widgets.css" rel="stylesheet">
-        <style>
+
+<head>
+  <meta charset="UTF-8">
+  <title>Mars Viewer</title>
+  <!-- Cesium library -->
+  <script src="https://cesium.com/downloads/cesiumjs/releases/1.123/Build/Cesium/Cesium.js"></script>
+  <link href="https://cesium.com/downloads/cesiumjs/releases/1.123/Build/Cesium/Widgets/widgets.css" rel="stylesheet">
+  <style>
     html,
     body,
     #cesiumContainer {
@@ -17,39 +18,45 @@
       overflow: hidden;
       display: block;
     }
-        </style>
-    </head>
-    <body>
-        <!-- The DOM container where Cesium will render the globe -->
-        <div id="cesiumContainer"></div>
-        <script src="config.js"></script>
-        <script>
-  const { TITILER_URL, FLASK_URL, MARS_TIF } = window.__ENV__;
-  const tileUrl = `${TITILER_URL}/cog/tiles/WorldCRS84Quad/{z}/{x}/{y}@1x?url=${FLASK_URL}/${MARS_TIF}`;
+  </style>
+</head>
 
-  const viewer = new Cesium.Viewer("cesiumContainer", {
-    imageryProvider: false,
-    baseLayerPicker: false,
-  });
+<body>
+  <!-- The DOM container where Cesium will render the globe -->
+  <div id="cesiumContainer"></div>
+  <script src="config.js"></script>
+  <script>
+    const { TITILER_URL, FLASK_URL, MARS_TIF } = window.__ENV__;
+    const tileUrl = `${TITILER_URL}/cog/tiles/WorldCRS84Quad/{z}/{x}/{y}@1x?url=${FLASK_URL}/${MARS_TIF}`;
 
-  viewer.scene.globe.ellipsoid = new Cesium.Ellipsoid(
-    3396190.0,
-    3396190.0,
-    3376200.0
-  );
+    const viewer = new Cesium.Viewer("cesiumContainer", {
+      imageryProvider: false,
+      baseLayerPicker: false,
+    });
 
-  viewer.imageryLayers.addImageryProvider(
-    new Cesium.UrlTemplateImageryProvider({
-      url: tileUrl,
-      tilingScheme: new Cesium.GeographicTilingScheme(),
-      rectangle: Cesium.Rectangle.fromDegrees(-180, -90, 180, 90),
-      credit: "Mars 6.25° data via TiTiler + Flask",
-    })
-  );
+    viewer.scene.globe.ellipsoid = new Cesium.Ellipsoid(
+      3396190.0,
+      3396190.0,
+      3376200.0
+    );
 
-  viewer.camera.flyTo({
-    destination: Cesium.Cartesian3.fromDegrees(137.4, -4.6, 2_000_000),
-  });
-        </script>
-    </body>
+    // Set zoom limits in meters (distance from the ellipsoid or terrain)
+    viewer.scene.screenSpaceCameraController.minimumZoomDistance = 4.0e5;  // min ~4,000 km above surface
+    viewer.scene.screenSpaceCameraController.maximumZoomDistance = 3.0e7;   // max ~30,000 km
+
+    viewer.imageryLayers.addImageryProvider(
+      new Cesium.UrlTemplateImageryProvider({
+        url: tileUrl,
+        tilingScheme: new Cesium.GeographicTilingScheme(),
+        rectangle: Cesium.Rectangle.fromDegrees(-180, -90, 180, 90),
+        credit: "Mars 6.25° data via TiTiler + Flask",
+      })
+    );
+
+    viewer.camera.flyTo({
+      destination: Cesium.Cartesian3.fromDegrees(137.4, -4.6, 2_000_000),
+    });
+  </script>
+</body>
+
 </html>

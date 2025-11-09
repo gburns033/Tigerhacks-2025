@@ -1,10 +1,21 @@
-# rover_env.py
+# region Imports
 import numpy as np
 from cost_layers import make_synthetic_mars, CostLayers
+# endregion
 
+# region Synthetic Environment
 class RoverEnv:
     """Synthetic environment fallback (not used for GeoTIFF path)."""
-    ACTIONS = [(-1,0),(1,0),(0,-1),(0,1),(-1,-1),(-1,1),(1,-1),(1,1)]
+    ACTIONS = [
+        (-1, 0),
+        (1, 0),
+        (0, -1),
+        (0, 1),
+        (-1, -1),
+        (-1, 1),
+        (1, -1),
+        (1, 1),
+    ]
 
     def __init__(self, H=100, W=100, seed=42):
         self.H, self.W = H, W
@@ -17,16 +28,31 @@ class RoverEnv:
         sidx = self.rng.integers(0, len(free))
         gidx = self.rng.integers(0, len(free))
         self.start = tuple(free[sidx])
-        self.goal  = tuple(free[gidx])
+        self.goal = tuple(free[gidx])
         self.pos = self.start
+# endregion
 
+# region Environment from Predefined Layers
 class RoverEnvFromLayers:
     """Lightweight shim when you already built CostLayers from GeoTIFF."""
-    ACTIONS = [(-1,0),(1,0),(0,-1),(0,1),(-1,-1),(-1,1),(1,-1),(1,1)]
+    ACTIONS = [
+        (-1, 0),
+        (1, 0),
+        (0, -1),
+        (0, 1),
+        (-1, -1),
+        (-1, 1),
+        (1, -1),
+        (1, 1),
+    ]
 
     def __init__(self, layers: CostLayers):
         self.layers = layers
         self.H, self.W = layers.slope.shape
-        self.pos = (self.H//2, self.W//2)
+        self.pos = (self.H // 2, self.W // 2)
         self.start = self.pos
-        self.goal = (min(self.H-2, self.pos[0]+10), min(self.W-2, self.pos[1]+10))
+        self.goal = (
+            min(self.H - 2, self.pos[0] + 10),
+            min(self.W - 2, self.pos[1] + 10),
+        )
+# endregion

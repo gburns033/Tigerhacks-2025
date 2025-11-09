@@ -135,40 +135,72 @@ btnImport.onclick = () => fileInput.click();
 fileInput.onchange = async e => {
   const file = e.target.files[0];
   if (!file) return;
+
+  const lowerName = file.name.toLowerCase();
+  const mime = file.type || "";
+  const looksJson =
+    lowerName.endsWith(".json") ||
+    mime === "application/json" ||
+    mime === "text/json";
+
+  if (!looksJson) {
+    status("⚠ Only .json files are supported. You selected: " + file.name);
+    fileInput.value = ""; // reset file picker
+    return;
+  }
+
   try {
     const text = await file.text();
-    const data = JSON.parse(text);
-    if (!Array.isArray(data.positions)) {
-      status("⚠ Invalid file.");
+    if (!text.trim()) {
+      status("⚠ The chosen file is empty.");
       return;
     }
 
-    // clear existing
-    waypoints.splice(0, waypoints.length);
+    let data;
+    try {
+      data = JSON.parse(text);
+    } catch (parseErr) {
+      status("⚠ File is not valid JSON (" + parseErr.message + ")");
+      return;
+    }
+
+    if (!data || typeof data !== "object") {
+      status("⚠ File does not contain a JSON object.");
+      return;
+    }
+    if (!Array.isArray(data.positions)) {
+      status("⚠ Missing 'positions' array in JSON.");
+      return;
+    }
+
+    waypoints.length = 0;
     if (solvedEntity) viewer.entities.remove(solvedEntity);
     viewer.entities.values
       .filter(e => e.__isWP)
       .forEach(e => viewer.entities.remove(e));
 
-    // ----- add back user waypoints -----
-    const wpList = data.waypoints || [];
-    if (wpList.length) {
-      wpList.forEach(p => addWaypoint(p.lon, p.lat));
-    } else {
-      // fallback: guess them (first and last of path)
+    const wp = Array.isArray(data.waypoints) ? data.waypoints : [];
+    if (wp.length > 0) wp.forEach(p => addWaypoint(p.lon, p.lat));
+    else {
       const first = data.positions[0];
       const last = data.positions[data.positions.length - 1];
       addWaypoint(first.lon, first.lat);
       addWaypoint(last.lon, last.lat);
     }
 
-    // ----- draw full route line -----
     drawSolvedRoute(data.positions);
     lastSolveResult = data;
-    status("Route imported (" + (wpList.length || 2) + " waypoints).");
+
+    status(
+      `Imported route with ${wp.length || 2} waypoint${
+        (wp.length || 2) > 1 ? "s" : ""
+      } (${data.positions.length} path points).`
+    );
   } catch (err) {
     console.error(err);
-    status("⚠ Could not import JSON: " + err.message);
+    status("❌ Import failed: " + err.message);
+  } finally {
+    fileInput.value = ""; // reset so same file can be chosen again
   }
 };
 

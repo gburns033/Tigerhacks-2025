@@ -1,0 +1,15 @@
+{
+  "type": "FeatureCollection",
+  "features": [
+    {
+      "type": "Feature",
+      "properties": { "name": "Olympus Mons" },
+      "geometry": { "type": "Point", "coordinates": [226.2, 18.65] }
+    },
+    {
+      "type": "Feature",
+      "properties": { "name": "Valles Marineris" },
+      "geometry": { "type": "Point", "coordinates": [-59.2, -14.6] }
+    }
+  ]
+}

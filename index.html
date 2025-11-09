@@ -1,117 +1,171 @@
 <!DOCTYPE html>
 <html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <title>Mars Viewer</title>
+        <script src="https://cesium.com/downloads/cesiumjs/releases/1.123/Build/Cesium/Cesium.js"></script>
+        <link href="https://cesium.com/downloads/cesiumjs/releases/1.123/Build/Cesium/Widgets/widgets.css" rel="stylesheet">
+        <style>
+      html,
+      body,
+      #cesiumContainer {
+        width: 100%;
+        height: 100%;
+        margin: 0;
+        padding: 0;
+        overflow: hidden;
+        display: block;
+      }
+        </style>
+    </head>
+    <body>
+        <div id="cesiumContainer"></div>
+        <script src="config.js"></script>
+        <script>
+                const { TITILER_URL, FLASK_URL, MARS_TIF } = window.__ENV__;
+                const tileUrl = `${TITILER_URL}/cog/tiles/WorldCRS84Quad/{z}/{x}/{y}@1x?url=${FLASK_URL}/${MARS_TIF}&colormap_name=inferno`;
 
-<head>
-  <meta charset="UTF-8">
-  <title>Mars Viewer</title>
-  <!-- Cesium library -->
-  <script src="https://cesium.com/downloads/cesiumjs/releases/1.123/Build/Cesium/Cesium.js"></script>
-  <link href="https://cesium.com/downloads/cesiumjs/releases/1.123/Build/Cesium/Widgets/widgets.css" rel="stylesheet">
-  <style>
-    html,
-    body,
-    #cesiumContainer {
-      width: 100%;
-      height: 100%;
-      margin: 0;
-      padding: 0;
-      overflow: hidden;
-      display: block;
-    }
-  </style>
-</head>
+                const viewer = new Cesium.Viewer("cesiumContainer", {
+                  imageryProvider: false,
+                  baseLayerPicker: false,
+                  animation: false,
+                  timeline: false,
+                  creditContainer: document.createElement("div"),
+                });
 
-<body>
-  <!-- The DOM container where Cesium will render the globe -->
-  <div id="cesiumContainer"></div>
-  <script src="config.js"></script>
-  <script>
-    const { TITILER_URL, FLASK_URL, MARS_TIF } = window.__ENV__;
-    const tileUrl = `${TITILER_URL}/cog/tiles/WorldCRS84Quad/{z}/{x}/{y}@1x?url=${FLASK_URL}/${MARS_TIF}&colormap_name=inferno`;
+                viewer.scene.globe.ellipsoid = new Cesium.Ellipsoid(
+                  3396190.0,
+                  3396190.0,
+                  3376200.0
+                );
 
-    const viewer = new Cesium.Viewer("cesiumContainer", {
-      imageryProvider: false,
-      baseLayerPicker: false,
-      animation: false,
-      timeline: false,
-      creditContainer: document.createElement('div'),
-    });
+                viewer.scene.screenSpaceCameraController.minimumZoomDistance = 4.0e5;
+                viewer.scene.screenSpaceCameraController.maximumZoomDistance = 3.0e7;
 
-    viewer.scene.globe.ellipsoid = new Cesium.Ellipsoid(
-      3396190.0,
-      3396190.0,
-      3376200.0
-    );
+                viewer.imageryLayers.addImageryProvider(
+                  new Cesium.UrlTemplateImageryProvider({
+                    url: tileUrl,
+                    tilingScheme: new Cesium.GeographicTilingScheme(),
+                    rectangle: Cesium.Rectangle.fromDegrees(-180, -90, 180, 90),
+                    credit: "Mars 6.25° data via TiTiler + Flask",
+                  })
+                );
 
-    // Set zoom limits in meters (distance from the ellipsoid or terrain)
-    viewer.scene.screenSpaceCameraController.minimumZoomDistance = 4.0e5;  // min ~4,000 km above surface
-    viewer.scene.screenSpaceCameraController.maximumZoomDistance = 3.0e7;   // max ~30,000 km
+                viewer.scene.fog.enabled = false;
+                viewer.scene.globe.showGroundAtmosphere = false;
+                if (viewer.scene.skyAtmosphere) viewer.scene.skyAtmosphere.show = false;
 
-    viewer.imageryLayers.addImageryProvider(
-      new Cesium.UrlTemplateImageryProvider({
-        url: tileUrl,
-        tilingScheme: new Cesium.GeographicTilingScheme(),
-        rectangle: Cesium.Rectangle.fromDegrees(-180, -90, 180, 90),
-        credit: "Mars 6.25° data via TiTiler + Flask",
-      })
-    );
+                const imageryLayer = viewer.imageryLayers.get(0);
+                imageryLayer.alpha = 0.9;
+                imageryLayer.brightness = 1.1;
+                imageryLayer.saturation = 0.4;
 
-    // Disable the distance-based fog entirely
-    viewer.scene.fog.enabled = false;
-    viewer.scene.globe.showGroundAtmosphere = false;
-    if (viewer.scene.skyAtmosphere) {
-      viewer.scene.skyAtmosphere.show = false;
-    }
+                viewer.camera.flyTo({
+                  destination: Cesium.Cartesian3.fromDegrees(-133.3, 18.4, 3_500_000),
+                });
 
-    const imageryLayer = viewer.imageryLayers.get(0);
-    imageryLayer.alpha = 0.9;
-    imageryLayer.brightness = 1.1;
-    imageryLayer.saturation = 0.4;
+                const scene = viewer.scene;
+                const camera = scene.camera;
 
-    viewer.camera.flyTo({
-      destination: Cesium.Cartesian3.fromDegrees(-133.3, 18.4, 3_500_000),
-    });
+                function isVisibleToCamera(cartesian) {
+                  const occluder = new Cesium.EllipsoidalOccluder(
+                    scene.globe.ellipsoid,
+                    camera.positionWC
+                  );
+                  return occluder.isPointVisible(cartesian);
+                }
 
+                scene.postRender.addEventListener(() => {
+                  viewer.entities.values.forEach((entity) => {
+                    if (!entity.position || !entity.label) return;
+                    const pos = Cesium.Property.getValueOrDefault(
+                      entity.position,
+                      scene.time
+                    );
+                    const visible = isVisibleToCamera(pos);
+                    entity.label.show = visible;
+                    if (entity.billboard) entity.billboard.show = visible;
+                  });
+                });
+          
+          const marsEllipsoid = viewer.scene.globe.ellipsoid;
 
+          fetch("./mars_landmarks.geojson")
+            .then((r) => r.json())
+            .then((geojson) => {
+              viewer.resolutionScale = window.devicePixelRatio;
+              const features = geojson.features ?? [];
+              console.log(`Loaded ${features.length} features`);
 
+              features.forEach((f) => {
+                if (
+                  !f.geometry ||
+                  f.geometry.type !== "Point" ||
+                  !Array.isArray(f.geometry.coordinates)
+                )
+                  return;
 
-    const handler = new Cesium.ScreenSpaceEventHandler(viewer.scene.canvas);
+                const [lon, lat] = f.geometry.coordinates;
+                if (!Number.isFinite(lon) || !Number.isFinite(lat)) return;
 
-// Create a simple HTML element to display coordinates
-const coordLabel = document.createElement("div");
-coordLabel.style.position = "absolute";
-coordLabel.style.bottom = "10px";
-coordLabel.style.left = "10px";
-coordLabel.style.padding = "4px 8px";
-coordLabel.style.background = "rgba(0,0,0,0.6)";
-coordLabel.style.color = "white";
-coordLabel.style.fontFamily = "monospace";
-coordLabel.style.fontSize = "13px";
-coordLabel.style.borderRadius = "4px";
-document.body.appendChild(coordLabel);
+                const name = f.properties?.name ?? "Unnamed";
+                const pos = viewer.scene.globe.ellipsoid.cartographicToCartesian(
+                  Cesium.Cartographic.fromDegrees(lon, lat, 0.0)
+                );
 
-handler.setInputAction(
-  function (movement) {
-    const ray = viewer.camera.getPickRay(movement.endPosition);
-    const cartesian = viewer.scene.globe.pick(ray, viewer.scene);
+                viewer.entities.add({
+                  name,
+                  position: pos,
+                  point: {
+                    pixelSize: 6,
+                    color: Cesium.Color.fromCssColorString("#c34a2c"),
+                    outlineColor: Cesium.Color.BLACK,
+                    outlineWidth: 1,
+                    heightReference: Cesium.HeightReference.NONE,
+                  },
+                  label: {
+                    text: name,
+                    font: "20px 'Segoe UI Semibold', sans-serif",
+                    fillColor: Cesium.Color.fromCssColorString("#f8debd"),
+                    outlineColor: Cesium.Color.BLACK.withAlpha(0.7),
+                    outlineWidth: 3,
+                    style: Cesium.LabelStyle.FILL_AND_OUTLINE,
+                    verticalOrigin: Cesium.VerticalOrigin.BOTTOM,
+                    pixelOffset: new Cesium.Cartesian2(0, -18),
+                    disableDepthTestDistance: 0
+                  },
+                });
+              });
+            })
+            .catch((err) => console.error("GeoJSON load failed:", err));
 
-    if (cartesian) {
-      const cartographic = Cesium.Ellipsoid.WGS84.cartesianToCartographic(
-        cartesian
-      );
+          const handler = new Cesium.ScreenSpaceEventHandler(viewer.scene.canvas);
+          const coordLabel = document.createElement("div");
+          coordLabel.style.position = "absolute";
+          coordLabel.style.bottom = "10px";
+          coordLabel.style.left = "10px";
+          coordLabel.style.padding = "4px 8px";
+          coordLabel.style.background = "rgba(0,0,0,0.6)";
+          coordLabel.style.color = "white";
+          coordLabel.style.fontFamily = "monospace";
+          coordLabel.style.fontSize = "13px";
+          coordLabel.style.borderRadius = "4px";
+          document.body.appendChild(coordLabel);
 
-      const lat = Cesium.Math.toDegrees(cartographic.latitude).toFixed(5);
-      const lon = Cesium.Math.toDegrees(cartographic.longitude).toFixed(5);
-      const height = cartographic.height.toFixed(1);
+          handler.setInputAction((movement) => {
+            const ray = viewer.camera.getPickRay(movement.endPosition);
+            const cartesian = viewer.scene.globe.pick(ray, viewer.scene);
 
-      coordLabel.textContent = `Lon: ${lon}°, Lat: ${lat}°, H: ${height}m`;
-    } else {
-      coordLabel.textContent = "Off planet";
-    }
-  },
-  Cesium.ScreenSpaceEventType.MOUSE_MOVE
-);
-  </script>
-</body>
-
+            if (cartesian) {
+              const marsEllipsoid = viewer.scene.globe.ellipsoid;
+              const carto = marsEllipsoid.cartesianToCartographic(cartesian);
+              const lat = Cesium.Math.toDegrees(carto.latitude).toFixed(5);
+              const lon = Cesium.Math.toDegrees(carto.longitude).toFixed(5);
+              coordLabel.textContent = `Lon: ${lon}°, Lat: ${lat}°`;
+            } else {
+              coordLabel.textContent = "Off planet";
+            }
+          }, Cesium.ScreenSpaceEventType.MOUSE_MOVE);
+        </script>
+    </body>
 </html>

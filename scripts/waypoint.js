@@ -124,9 +124,9 @@ function autoGridSize(waypoints) {
   const lons = waypoints.map(p => p.lon);
   const lats = waypoints.map(p => p.lat);
   const lonMin = Math.min(...lons),
-        lonMax = Math.max(...lons),
-        latMin = Math.min(...lats),
-        latMax = Math.max(...lats);
+    lonMax = Math.max(...lons),
+    latMin = Math.min(...lats),
+    latMax = Math.max(...lats);
 
   const lonSpan = lonMax - lonMin;
   const latSpan = latMax - latMin;
@@ -154,9 +154,13 @@ function drawSolvedRoute(points) {
   solvedEntity = viewer.entities.add({
     polyline: {
       positions: Cesium.Cartesian3.fromRadiansArray(rad),
-      width: 3,
-      material: new Cesium.PolylineGlowMaterialProperty({ glowPower: 0.15, color: Cesium.Color.RED }),
-      clampToGround: true
+      width: 6,
+      material: new Cesium.ColorMaterialProperty(
+        Cesium.Color.fromCssColorString("#7aa2ff").withAlpha(0.95)
+      ),
+      clampToGround: false,
+      arcType: Cesium.ArcType.GEODESIC,
+      granularity: Cesium.Math.RADIANS_PER_DEGREE / 10
     }
   });
   const rect = Cesium.Rectangle.fromRadians(

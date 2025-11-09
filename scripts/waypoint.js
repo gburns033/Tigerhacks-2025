@@ -18,7 +18,7 @@ slopeW.oninput = () => slopeWVal.textContent = (+slopeW.value).toFixed(2);
 function status(msg) { statusEl.textContent = msg || ""; }
 
 const waypoints = []; // {lon, lat, entity}
-let adding = true;
+let adding = false;
 let dashedEntity = null;
 let solvedEntity = null;
 

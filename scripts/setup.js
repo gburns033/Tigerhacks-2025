@@ -14,7 +14,8 @@ var viewer = new Cesium.Viewer("cesiumContainer", {
     creditContainer: document.createElement("div"),
     sceneModePicker: true,
     selectionIndicator: true,
-    scene3DOnly: true
+    scene3DOnly: true,
+    geocoder: false
 });
 
 // Mars ellipsoid
